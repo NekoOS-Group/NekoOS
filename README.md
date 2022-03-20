@@ -1,1 +1,1 @@
-Just creater a new folder.
+Just create a new folder.
