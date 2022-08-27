@@ -12,6 +12,5 @@ global_asm!(include_str!("entry.asm"));
 
 #[no_mangle]
 fn start() {
-    sbi_putchar('c' as usize);
     sbi_shutdown();
 }
