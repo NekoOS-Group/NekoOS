@@ -1,0 +1,12 @@
+[package]
+name = "neko-kernel"
+version = "0.1.0"
+edition = "2021"
+authors = ["NekoOS Group"]
+license = "GPL3.0"
+rust-version = "1.65"
+description = "a rust OS for riscv64 only which is KAWAII"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
