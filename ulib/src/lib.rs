@@ -1,14 +1,25 @@
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
+#![no_std]
+
+mod lang;
+pub mod syscall;
+
+fn clear_bss() {
+    extern "C" {
+        fn start_bss();
+        fn end_bss();
+    }
+    unsafe {
+        core::slice::from_raw_parts_mut(
+            start_bss as usize as *mut u8,
+            end_bss as usize - start_bss as usize,
+        )
+        .fill(0);
+    }
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
+#[no_mangle]
+#[link_section = ".text.entry"]
+pub extern "C" fn _start() -> ! {
+    clear_bss();
+    syscall::exit(0);
 }

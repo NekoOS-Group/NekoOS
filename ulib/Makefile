@@ -1,13 +1,8 @@
 # Building
 TARGET := riscv64gc-unknown-none-elf
 MODE := release
-NAME := neko-kernel
-KERNEL_ELF := target/$(TARGET)/$(MODE)/$(NAME)
-KERNEL_BIN := $(KERNEL_ELF).bin
-
-# Binutils
-OBJDUMP := rust-objdump --arch-name=riscv64
-OBJCOPY := rust-objcopy --binary-architecture=riscv64
+NAME := libulib.rlib
+ULIB := target/$(TARGET)/$(MODE)/$(NAME)
 
 $(KERNEL_BIN): kernel
 	@$(OBJCOPY) $(KERNEL_ELF) --strip-all -O binary $(KERNEL_BIN)

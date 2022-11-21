@@ -26,5 +26,4 @@ fn bss_init() {
 fn start() -> ! {
     bss_init();
     panic!("qwq");
-    //sbi::shutdown();
 }

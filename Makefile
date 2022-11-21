@@ -15,3 +15,6 @@ build:kernel ulib
 	
 run: build
 	@$(QEMU) -kernel ${KERNEL_PATH}
+	
+clear:
+    rm -rf ./target/*
