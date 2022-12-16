@@ -3,23 +3,19 @@
 mod lang;
 pub mod syscall;
 
-fn clear_bss() {
+fn bss_init() {
     extern "C" {
-        fn start_bss();
-        fn end_bss();
+        fn sbss();
+        fn ebss();
     }
-    unsafe {
-        core::slice::from_raw_parts_mut(
-            start_bss as usize as *mut u8,
-            end_bss as usize - start_bss as usize,
-        )
-        .fill(0);
-    }
+    (sbss as usize..ebss as usize).for_each(
+        |a| { unsafe { (a as *mut u8).write_volatile(0) } } 
+    );
 }
 
 #[no_mangle]
 #[link_section = ".text.entry"]
 pub extern "C" fn _start() -> ! {
-    clear_bss();
+    bss_init();
     syscall::exit(0);
 }

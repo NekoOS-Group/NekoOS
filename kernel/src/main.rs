@@ -5,9 +5,11 @@
 mod config;
 mod sbi;
 mod dev;
+mod trap;
+mod syscall;
+mod debug;
 
 use core::arch::global_asm;
-
 global_asm!(include_str!("entry.asm"));
 
 fn bss_init() {
@@ -15,15 +17,20 @@ fn bss_init() {
         fn sbss();
         fn ebss();
     }
-    (sbss as usize..ebss as usize)
-        .for_each(
-            |a| { unsafe { (a as *mut u8).write_volatile(0) } } 
-        );
+    (sbss as usize..ebss as usize).for_each(
+        |a| { unsafe { (a as *mut u8).write_volatile(0) } } 
+    );
 }
    
 
 #[no_mangle]
 fn start() -> ! {
     bss_init();
-    panic!("qwq");
+    println!( "[Neko] Hello World!" );
+    println!( "{:#x}", debug::get_sp() );
+    trap::init();
+    trap::init_timer_interrupt();
+    trap::enable_trap();
+    dev::timer::set_next_trigger();
+    loop{}
 }

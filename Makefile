@@ -2,6 +2,7 @@ QEMU := qemu-system-riscv64 -machine virt -nographic
 
 KERNEL_NAME := neko-kernel.bin
 KERNEL_PATH := target/${KERNEL_NAME}
+KERNEL_ENTRY_PA := 0x80200000
 MAKE := make
 
 .PHONY : all
@@ -18,7 +19,7 @@ ulib:
 build:kernel ulib
 	
 run: build
-	@$(QEMU) -kernel ${KERNEL_PATH}
+	@$(QEMU) -kernel $(KERNEL_PATH)
 	
 clear:
-    rm -rf ./target/*
+	rm -rf ./target/*
