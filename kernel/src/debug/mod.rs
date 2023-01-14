@@ -1,3 +1,5 @@
+#![allow(unused)]
+
 use core::arch::asm;
 
 pub fn get_sp() -> usize {

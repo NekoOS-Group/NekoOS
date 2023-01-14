@@ -6,11 +6,10 @@
     ld x\n, \n*8(sp)
 .endm
     .section .text
-    .globl __alltraps
-    .globl __restore
+    .globl __traps_user
     .align 2
-__alltraps:
-    # csrrw sp, sscratch, sp
+__traps_user:
+    csrrw sp, sscratch, sp
     # now sp->kernel stack, sscratch->user stack
     # allocate a TrapContext on kernel stack
     addi sp, sp, -34*8
@@ -57,5 +56,12 @@ __restore:
     # release TrapContext on kernel stack
     addi sp, sp, 34*8
     # now sp->kernel stack, sscratch->user stack
-    # csrrw sp, sscratch, sp
+    csrrw sp, sscratch, sp
+    sret
+
+    .section .text
+    .globl __traps_sys
+    .align 2
+__traps_sys:
+    call sys_trap_handler
     sret

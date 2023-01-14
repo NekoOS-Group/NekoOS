@@ -15,10 +15,11 @@ use core::arch::asm;
 
 pub fn init() {
     extern "C" {
-        fn __alltraps();
+        fn __traps_user();
+        fn __traps_sys();
     }
     unsafe {
-        stvec::write(__alltraps as usize, TrapMode::Direct);
+        stvec::write(__traps_sys as usize, TrapMode::Direct);
     }
     crate::println!("[Neko] trap inited.");
 }
@@ -69,4 +70,22 @@ pub fn trap_handler(context : &mut TrapContext ) -> &mut TrapContext {
         }
     }
     context
+}
+
+#[no_mangle]
+pub fn sys_trap_handler() -> () {
+    let scause = scause::read();
+    let stval = stval::read();
+    match scause.cause() {
+        Trap::Interrupt(Interrupt::SupervisorTimer) => {
+            crate::dev::timer::set_next_trigger();
+        }
+        _ => { 
+            panic!(
+                "Unsupported system trap {:?}, stval = {:#x}!",
+                scause.cause(),
+                stval,
+            );
+        }
+    };
 }

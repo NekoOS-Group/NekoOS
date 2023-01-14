@@ -27,7 +27,6 @@ fn bss_init() {
 fn start() -> ! {
     bss_init();
     println!( "[Neko] Hello World!" );
-    println!( "{:#x}", debug::get_sp() );
     trap::init();
     trap::init_timer_interrupt();
     trap::enable_trap();

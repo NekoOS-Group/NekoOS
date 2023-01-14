@@ -1,3 +1,4 @@
+#![feature(linkage)]
 #![no_std]
 
 mod lang;
@@ -14,8 +15,14 @@ fn bss_init() {
 }
 
 #[no_mangle]
+#[linkage = "weak"]
+fn main() -> i32 {
+    panic!("Cannot find main!");
+}
+
+#[no_mangle]
 #[link_section = ".text.entry"]
 pub extern "C" fn _start() -> ! {
     bss_init();
-    syscall::exit(0);
+    syscall::exit(main());
 }
