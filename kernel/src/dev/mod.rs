@@ -1,3 +1,3 @@
-pub(crate) mod console;
+pub mod console;
 
 pub mod timer;

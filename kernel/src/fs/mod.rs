@@ -1,8 +1,10 @@
+#![allow(unused)]
+
 const FD_STDIN: usize = 0;
-const FD_STDOUT: usize = 0;
+const FD_STDOUT: usize = 1;
+const FD_STDERR: usize = 2;
 
-
-pub fn syscall_read(fd: usize, buf: *const u8, len: usize) -> isize {
+pub fn sys_read(fd: usize, buf: *const u8, len: usize) -> isize {
     match fd {
         FD_STDIN => {
             -1
@@ -11,7 +13,7 @@ pub fn syscall_read(fd: usize, buf: *const u8, len: usize) -> isize {
     }
 }
 
-pub fn syscall_write(fd: usize, buf: *const u8, len: usize) -> isize {
+pub fn sys_write(fd: usize, buf: *const u8, len: usize) -> isize {
     match fd {
         FD_STDOUT => {
             let slice = unsafe{ core::slice::from_raw_parts(buf, len) };

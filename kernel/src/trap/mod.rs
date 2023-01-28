@@ -1,17 +1,18 @@
-#![allow(unused)]
 
 mod context;
+mod syscall;
+
 use context::TrapContext;
-use crate::{syscall::syscall, dev::console::print, println};
+
+use crate::println;
+
 use riscv::{register::{
     mtvec::TrapMode,
     scause::{self, Exception, Interrupt, Trap},
-    sie, stval, stvec, sstatus,sepc
-}, asm};
+    sie, stval, stvec, sstatus
+} };
 
 core::arch::global_asm!(include_str!("trap_entry.S"));
-
-use core::arch::asm;
 
 pub fn init() {
     extern "C" {
@@ -35,14 +36,15 @@ pub fn enable_trap() {
     unsafe {
         sstatus::set_sie();
     }
-    println!("[Info] trap enabled.");
+    info!("trap enabled.");
 }
 
+#[allow(unused)]
 pub fn disable_trap() {
     unsafe {
         sstatus::clear_sie();
     }
-    println!("[Info] trap disabled.");
+    info!("trap disabled.");
 }
 
 #[no_mangle]
@@ -52,7 +54,7 @@ pub fn trap_handler(context : &mut TrapContext ) -> &mut TrapContext {
     match scause.cause() {
         Trap::Exception(Exception::UserEnvCall) => {
             context.sepc += 4;
-            context.x[10] = syscall(
+            context.x[10] = syscall::syscall(
                 context.x[17], 
                 [context.x[10], context.x[11], context.x[12]]
             ) as usize;

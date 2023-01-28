@@ -26,3 +26,8 @@ pub extern "C" fn _start() -> ! {
     bss_init();
     syscall::exit(main());
 }
+
+#[cfg(test)]
+mod test {
+    
+}
