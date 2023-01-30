@@ -21,10 +21,10 @@ pub struct PageTableEntry {
 }
 
 impl PageTableEntry {
-    fn new_empty() -> Self {
+    pub fn new_empty() -> Self {
         PageTableEntry { bits: 0 }
     }
-    fn new(ppn: usize, flags: Flags) -> Self {
+    pub fn new(ppn: usize, flags: Flags) -> Self {
         PageTableEntry {
             bits: ppn << 10 | flags.bits as usize,
         }
@@ -32,10 +32,10 @@ impl PageTableEntry {
 }
 
 impl PageTableEntry {
-    fn get_ppn(&self) -> usize {
+    pub fn get_ppn(&self) -> usize {
         self.bits >> 10 & ((1usize << 44) - 1)
     }
-    fn get_flags(&self) -> Flags {
+    pub fn get_flags(&self) -> Flags {
         Flags::from_bits(self.bits as u8).unwrap()
     }
     pub fn is_valid(&self) -> bool {
@@ -53,12 +53,19 @@ impl PageTableEntry {
     pub fn is_user_accessable(&self) -> bool {
         (self.get_flags() & Flags::U) != Flags::empty()
     }
+    pub fn is_global(&self) -> bool {
+        (self.get_flags() & Flags::G) != Flags::empty()
+    }
     pub fn is_accessed(&self) -> bool {
         (self.get_flags() & Flags::A) != Flags::empty()
     }
     pub fn is_dirty(&self) -> bool {
         (self.get_flags() & Flags::D) != Flags::empty()
     }
+    pub fn is_empty(&self) -> bool {
+        self.bits == 0
+    }
+
 }
 
 impl fmt::Debug for PageTableEntry {

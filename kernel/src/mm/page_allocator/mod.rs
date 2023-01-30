@@ -2,14 +2,16 @@ use alloc::boxed::Box;
 use super::page::Page;
 
 mod stack_allocator;
+mod buddy_allocator;
 
 trait PageAllocator {
-    fn new(l: usize, r: usize) -> Self;
+    fn new() -> Self;
+    fn add(&mut self, l: usize, r:usize);
     fn alloc(&mut self) -> Option<Page>;
     fn dealloc(&mut self, ppn: usize);
 }
 
-type PageAllocatorImpl = stack_allocator::StackAllocator;
+type PageAllocatorImpl = buddy_allocator::BuddyAllocator;
 
 pub static mut GLOABAL_ALLOCATOR: Option<Box<PageAllocatorImpl>> = None;
 
@@ -24,20 +26,38 @@ pub fn dealloc(ppn: usize) {
         inner.dealloc(ppn);
     } else {} }}
 
-pub fn init() {
-    use crate::config::{ekernel, EARLY_MEMORY_END, PAGE_SIZE};
-    info!( "assigned user region {:#x}-{:#x}({} pages in tot)", 
-        ekernel as usize, 
-        EARLY_MEMORY_END as usize, 
-        (EARLY_MEMORY_END - ekernel as usize) / PAGE_SIZE
+pub fn init(memory: &fdt::standard_nodes::Memory) {
+    use crate::config::{skernel, ekernel, PAGE_SIZE, MEMORY_START_ADDRESS};
+    info!( 
+        "memory detect: region [{:#x}, {:#x}) ({} pages) reserved", 
+        MEMORY_START_ADDRESS,
+        ekernel as usize,
+        (ekernel as usize - MEMORY_START_ADDRESS) / PAGE_SIZE
     );
     unsafe {
-        GLOABAL_ALLOCATOR = Some(Box::new(PageAllocatorImpl::new(
-            ekernel as usize / PAGE_SIZE,
-            EARLY_MEMORY_END / PAGE_SIZE
-        )))
+        GLOABAL_ALLOCATOR = Some(Box::new(PageAllocatorImpl::new()))
+    }
+    for region in memory.regions() {
+        let mut l = region.starting_address as usize;
+        let r = region.starting_address as usize + region.size.unwrap();
+        if l <= skernel as usize && r >= ekernel as usize {
+            l = ekernel as usize;
+        }
+        add(l / PAGE_SIZE, r / PAGE_SIZE);
     }
     crate::println!("[Neko] page allocator inited.");
+}
+
+pub fn add(l: usize, r:usize) {
+    use crate::config::PAGE_SIZE;
+    info!( "memory detect: region [{:#x}, {:#x}) ({} pages) avaliable", 
+        l * PAGE_SIZE, 
+        r * PAGE_SIZE,
+        r - l
+    );
+    unsafe{ if let Some(ref mut inner) = GLOABAL_ALLOCATOR {
+        inner.add(l, r);
+    } else {} };
 }
 
 #[allow(unused)]
@@ -54,5 +74,5 @@ pub fn test() {
         v.push(frame);
     }
     drop(v);
-    info!("frame_allocator_test passed!");
+    debug!("frame_allocator_test passed!");
 }

@@ -8,8 +8,12 @@ pub struct StackAllocator {
 }
 
 impl super::PageAllocator for StackAllocator {
-    fn new(l: usize, r:usize) -> Self {
-        StackAllocator { l, r, stack: Vec::new() }
+    fn new() -> Self {
+        StackAllocator { l: 0, r: 0, stack: Vec::new() }
+    }
+    fn add(&mut self, l: usize, r:usize) {
+        self.l = l;
+        self.r = r;
     }
     fn alloc(&mut self) -> Option<Page> {
         if self.stack.len() > 0 {

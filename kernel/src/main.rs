@@ -30,14 +30,20 @@ fn bss_init() {
    
 
 #[no_mangle]
-fn start() -> ! {
+fn start(hartid: usize, dtb: usize) -> ! {
     bss_init();
+
+    println!( "[Neko] Nya~ from hart{} dtb @ {:#x}", hartid, dtb );
+
     config::logging::init();
     config::heap::init();
-
-    println!( "[Neko] Hello World!" );
+    config::heap::test();
     
-    mm::init();
+    let fdt = dev::fdt::get_fdt( 
+        unsafe {core::slice::from_raw_parts(dtb as *const u8, config::FDT_MAX_SIZE)} 
+    );
+
+    mm::init(&fdt.memory());
 
     trap::init();
     trap::init_timer_interrupt();

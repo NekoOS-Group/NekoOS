@@ -3,7 +3,7 @@ use crate::config;
 use super::page_allocator;
 
 pub struct Page {
-    ppn: usize,
+    pub ppn: usize,
 }
 
 impl Page {

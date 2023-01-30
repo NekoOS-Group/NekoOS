@@ -1,6 +1,6 @@
 <br />
 <div align="center">
-  <a href="https://github.com/othneildrew/Best-README-Template">
+  <a href="https://github.com/NekoOS-group/NekoOS">
     <img src="doc/image/Neko.jpeg" alt="Logo" width="130" height="100">
   </a>
 
@@ -13,39 +13,41 @@
   <p align="center">
     A rust based risc-v operating system!
     <br />
-    <a href="https://github.com/NekoOS-group/NekoOS-kernel"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/NekoOS-group/NekoOS"><strong>Explore the docs »</strong></a>
   </p>
 </div>
 
 
 <div align="center">
-  <a href="https://github.com/NekoOS-group/NekoOS-kernel/graphs/contributors">
-  <img src="https://img.shields.io/github/contributors/NekoOS-group/NekoOS-kernel.svg?style=for-the-badge"></img></a>
-  <a href="https://github.com/NekoOS-group/NekoOS-kernel/network/members">
-  <img src="https://img.shields.io/github/forks/NekoOS-group/NekoOS-kernel.svg?style=for-the-badge"></img></a>
-  <a href="https://github.com/NekoOS-group/NekoOS-kernel/stargazers">
-  <img src="https://img.shields.io/github/stars/NekoOS-group/NekoOS-kernel.svg?style=for-the-badge"></img></a>
-  <a href="https://github.com/NekoOS-group/NekoOS-kernel/issues">
-  <img src="https://img.shields.io/github/issues/NekoOS-group/NekoOS-kernel.svg?style=for-the-badge"></img></a>
-  <a href="https://github.com/NekoOS-group/NekoOS-kernel/blob/master/LICENSE.txt">
-  <img src="https://img.shields.io/github/license/NekoOS-group/NekoOS-kernel.svg?style=for-the-badge"></img>
+  <a href="https://github.com/NekoOS-group/NekoOS/graphs/contributors">
+  <img src="https://img.shields.io/github/contributors/NekoOS-group/NekoOS.svg?style=for-the-badge"></img></a>
+  <a href="https://github.com/NekoOS-group/NekoOS/network/members">
+  <img src="https://img.shields.io/github/forks/NekoOS-group/NekoOS.svg?style=for-the-badge"></img></a>
+  <a href="https://github.com/NekoOS-group/NekoOS/stargazers">
+  <img src="https://img.shields.io/github/stars/NekoOS-group/NekoOS.svg?style=for-the-badge"></img></a>
+  <a href="https://github.com/NekoOS-group/NekoOS/issues">
+  <img src="https://img.shields.io/github/issues/NekoOS-group/NekoOS.svg?style=for-the-badge"></img></a>
+  <a href="https://github.com/NekoOS-group/NekoOS/blob/master/LICENSE.txt">
+  <img src="https://img.shields.io/github/license/NekoOS-group/NekoOS.svg?style=for-the-badge"></img>
   </a>
 </div>
 
 <div align="center">
   <p align="center">
     <br />
-    <a href="https://github.com/NekoOS-group/NekoOS-kernel">View Demo</a>
+    <a href="https://github.com/NekoOS-group/NekoOS">View Demo</a>
     ·
-    <a href="https://github.com/NekoOS-group/NekoOS-kernel/issues">Report Bug</a>
+    <a href="https://github.com/NekoOS-group/NekoOS/issues">Report Bug</a>
     ·
-    <a href="https://github.com/NekoOS-group/NekoOS-kernel/issues">Request Feature</a>
+    <a href="https://github.com/NekoOS-group/NekoOS/issues">Request Feature</a>
   </p>
 </div>
 
 ## About The Project
 
-Neko is kawaii!
+Do you want your os weak up with a "Nya!", try NekoOS!
+
+Neko is kawaiiiiiiiii!
 
 ## Getting Start
 
@@ -59,8 +61,7 @@ This is an example on Ubuntu to install the requirement.
    rustup install nightly
    rustup target add riscv64gc-unknown-none-elf
    cargo install cargo-binutils
-   rustup component add rust-src
-   rustup component add llvm-tools-preview
+   rustup component add rust-src llvm-tools-preview
    ```
 
  - qemu  
@@ -80,10 +81,11 @@ make run LOG=DEBUG
     - [ ] dev
     - [ ] fs
     - [ ] mm
-      - [ ] memory detect
+      - [x] memory detect
       - [ ] memory segment manager
+      - [ ] virtual memory manager
       - [x] page allocator
-      - [ ] page table 
+      - [x] page table 
     - [ ] syscall
     - [ ] task
     - [x] trap

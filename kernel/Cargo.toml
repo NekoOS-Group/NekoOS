@@ -13,4 +13,5 @@ description = "a rust OS for riscv64 only which is KAWAII"
 log = "*"
 bitflags = "*"
 buddy_system_allocator = "*"
+fdt = "*"
 riscv = { git = "https://github.com/rcore-os/riscv", features = ["inline-asm"] }
