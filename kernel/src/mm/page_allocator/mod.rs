@@ -1,8 +1,10 @@
 use alloc::boxed::Box;
-use super::page::Page;
+use crate::mm::page::Page;
 
 mod stack_allocator;
 mod buddy_allocator;
+
+type PageAllocatorImpl = buddy_allocator::BuddyAllocator;
 
 trait PageAllocator {
     fn new() -> Self;
@@ -11,9 +13,7 @@ trait PageAllocator {
     fn dealloc(&mut self, ppn: usize);
 }
 
-type PageAllocatorImpl = buddy_allocator::BuddyAllocator;
-
-pub static mut GLOABAL_ALLOCATOR: Option<Box<PageAllocatorImpl>> = None;
+pub static mut GLOABAL_ALLOCATOR: Option<PageAllocatorImpl> = None;
 
 pub fn alloc() -> Option<Page> {
     unsafe{ if let Some(ref mut inner) = GLOABAL_ALLOCATOR {
@@ -35,7 +35,7 @@ pub fn init(memory: &fdt::standard_nodes::Memory) {
         (ekernel as usize - MEMORY_START_ADDRESS) / PAGE_SIZE
     );
     unsafe {
-        GLOABAL_ALLOCATOR = Some(Box::new(PageAllocatorImpl::new()))
+        GLOABAL_ALLOCATOR = Some(PageAllocatorImpl::new())
     }
     for region in memory.regions() {
         let mut l = region.starting_address as usize;

@@ -1,8 +1,7 @@
 use alloc::collections::BTreeMap;
 
-use crate::mm::{page_allocator, page_table_entry};
-
-use super::{page::Page, page_table::PageTable};
+use crate::mm;
+use crate::mm::page_table::{ PageFlag, PageTable };
 
 bitflags! {
     pub struct MapPermission : u8 {
@@ -19,20 +18,20 @@ pub enum MapType {
     Framed,
 }
 
-pub struct Segment {
+pub struct SegmentImpl {
     vpn_l: usize,
     vpn_r: usize,
-    pages: BTreeMap<usize, Page>,
+    pages: BTreeMap<usize, mm::Page>,
     map_type: MapType,
     permission: MapPermission
 }
 
-impl Segment {
+impl SegmentImpl {
     pub fn new(vpn_l: usize, vpn_r: usize, map_type: MapType, permission: MapPermission) -> Self {
         Self { vpn_l, vpn_r, pages: BTreeMap::new(), map_type, permission }
     }
 
-    pub fn copy_from(another: &Segment) -> Self {
+    pub fn copy_from(another: &SegmentImpl) -> Self {
         Self { 
             vpn_l: another.vpn_l, 
             vpn_r: another.vpn_r, 
@@ -43,26 +42,26 @@ impl Segment {
     }
 }
 
-impl Segment {
-    pub fn map_one(&mut self, page_table: &mut PageTable, vpn: usize) {
+impl SegmentImpl {
+    pub fn map_one(&mut self, page_table: &mut mm::PageTable, vpn: usize) {
         assert!( vpn >= self.vpn_l && vpn < self.vpn_r );
 
-        let mut ppn;
+        let ppn;
         match self.map_type {
             MapType::Linear { offset } => {
                 ppn = vpn - offset;
             }
             MapType::Framed => {
-                let page = page_allocator::alloc().unwrap();
+                let page = mm::page_allocator::alloc().unwrap();
                 ppn = page.ppn;
                 self.pages.insert(vpn, page);
             }
         }
 
-        page_table.map(vpn, ppn, page_table_entry::Flags::from_bits(self.permission.bits).unwrap() );
+        page_table.map(vpn, ppn, mm::PageFlag::from_permission(self.permission) );
     }
 
-    pub fn unmap_one(&mut self, page_table: &mut PageTable, vpn: usize) {
+    pub fn unmap_one(&mut self, page_table: &mut mm::PageTable, vpn: usize) {
         assert!( vpn >= self.vpn_l && vpn < self.vpn_r );
 
         match self.map_type {
@@ -75,13 +74,13 @@ impl Segment {
         page_table.unmap(vpn);
     }
 
-    pub fn map_all(&mut self, page_table: &mut PageTable) {
+    pub fn map_all(&mut self, page_table: &mut mm::PageTable) {
         for vpn in self.vpn_l..self.vpn_r {
             self.map_one(page_table, vpn);
         }
     }
 
-    pub fn unmap_all(&mut self, page_table: &mut PageTable) {
+    pub fn unmap_all(&mut self, page_table: &mut mm::PageTable) {
         for vpn in self.vpn_l..self.vpn_r {
             self.unmap_one(page_table, vpn);
         }

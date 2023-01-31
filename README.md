@@ -1,7 +1,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/NekoOS-group/NekoOS">
-    <img src="doc/image/Neko.jpeg" alt="Logo" width="130" height="100">
+    <img src="docs/image/Neko.jpeg" alt="Logo" width="130" height="100">
   </a>
 
   <h3 align="center">NekoOS-Kernel</h3>
@@ -81,11 +81,12 @@ make run LOG=DEBUG
     - [ ] dev
     - [ ] fs
     - [ ] mm
+      - [x] riscv64 arch
       - [x] memory detect
-      - [ ] memory segment manager
+      - [x] memory segment manager
       - [ ] virtual memory manager
       - [x] page allocator
-      - [x] page table 
+      - [ ] reconstruct page table 
     - [ ] syscall
     - [ ] task
     - [x] trap

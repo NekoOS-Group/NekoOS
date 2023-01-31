@@ -18,8 +18,13 @@ mod trap;
 mod fs;
 mod mm;
 
-use core::arch::global_asm;
-global_asm!(include_str!("entry.asm"));
+#[cfg(riscv64)]
+#[path="arch/riscv64/mod.rs"]
+mod arch;
+
+#[cfg(riscv32)]
+#[path="arch/riscv32/mod.rs"]
+mod arch;
 
 fn bss_init() {
     use config::{sbss, ebss};

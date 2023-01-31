@@ -15,7 +15,9 @@ impl PageAllocator for BuddyAllocator {
     }
     fn alloc(&mut self) -> Option<Page> {
         if let Some(ppn) = self.inner.alloc(1) {
-            Some(Page::new(ppn))
+            let p = Page::new(ppn);
+            p.clear();
+            Some(p)
         } else {
             None
         }

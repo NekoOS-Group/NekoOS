@@ -1,7 +1,7 @@
 use crate::config::PAGE_SIZE;
 
-use super::page::Page;
-use super::page_allocator;
+use crate::mm::page::Page;
+use crate::mm::page_allocator;
 use super::page_table_entry::{ PageTableEntry, self };
 
 pub struct Node {
@@ -27,7 +27,7 @@ impl Node {
     }
 
     pub fn new_inner(parent: &mut Node, index: usize) -> Self {
-        let mut node = Self::new_alloc();
+        let node = Self::new_alloc();
         parent.set_entry(
             index, 
             PageTableEntry::new(

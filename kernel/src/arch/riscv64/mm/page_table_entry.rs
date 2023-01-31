@@ -1,6 +1,7 @@
 #![allow(unused)]
 
 use core::fmt;
+use crate::mm::page_table;
 
 bitflags! {
     pub struct Flags: u8 {
@@ -12,6 +13,12 @@ bitflags! {
         const G = 1 << 5;
         const A = 1 << 6;
         const D = 1 << 7;
+    }
+}
+
+impl page_table::PageFlag for Flags {
+    fn from_permission(permission: crate::mm::vm_segment::MapPermission) -> Self {
+        Self::from_bits(permission.bits()).unwrap()
     }
 }
 

@@ -24,6 +24,10 @@ impl Page {
         }
     }
 
+    pub fn set_bytes(&self, data: &[u8]) {
+        self.get_bytes().copy_from_slice(data)
+    }
+
     pub fn clear(&self) {
         self.get_bytes().fill(0);
     }
