@@ -1,6 +1,6 @@
 use crate::config::PAGE_SIZE;
 
-use crate::mm::page::Page;
+use crate::mm::Page;
 use crate::mm::page_allocator;
 use super::page_table_entry::{ PageTableEntry, self };
 

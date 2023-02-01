@@ -17,8 +17,8 @@ bitflags! {
 }
 
 impl page_table::PageFlag for Flags {
-    fn from_permission(permission: crate::mm::vm_segment::MapPermission) -> Self {
-        Self::from_bits(permission.bits()).unwrap()
+    fn from_permission(permission: crate::mm::MapPermission) -> Self {
+        Self::from_bits(permission.bits()).unwrap() | Self::V
     }
 }
 
@@ -77,6 +77,14 @@ impl PageTableEntry {
 
 impl fmt::Debug for PageTableEntry {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.write_fmt(format_args!(" PTE[page: {} flag:{:#b}]", self.get_ppn(), self.get_flags()))
+        let v = if( self.is_valid() ) {"V"} else {"_"};
+        let r = if( self.is_readable() ) {"R"} else {"_"};
+        let w = if( self.is_writable() ) {"W"} else {"_"};
+        let x = if( self.is_executable() ) {"X"} else {"_"};
+        let u = if( self.is_user_accessable() ) {"U"} else {"_"};
+        let g = if( self.is_global() ) {"G"} else {"_"};
+        let a = if( self.is_accessed() ) {"A"} else {"_"};
+        let d = if( self.is_dirty() ) {"D"} else {"_"};
+        f.write_fmt(format_args!(" PTE<ppn:{:#x} flag:{}{}{}{}{}{}{}{}>", self.get_ppn(), v, r, w, x, u, g, a, d))
     }
 }

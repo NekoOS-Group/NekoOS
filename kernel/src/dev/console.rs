@@ -28,6 +28,6 @@ macro_rules! print {
 #[macro_export]
 macro_rules! println {
     ($fmt: literal $(, $($arg: tt)+)?) => {
-        $crate::dev::console::print(format_args!(concat!($fmt, "\n") $(, $($arg)+)?));
+        $crate::dev::console::print(format_args!(concat!($fmt, "\n") $(, $($arg)+)?))
     }
 }

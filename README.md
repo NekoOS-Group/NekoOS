@@ -84,9 +84,10 @@ make run LOG=DEBUG
       - [x] riscv64 arch
       - [x] memory detect
       - [x] memory segment manager
-      - [ ] virtual memory manager
+      - [x] virtual memory manager 
       - [x] page allocator
-      - [ ] reconstruct page table 
+      - [x] reconstruct page table 
+      - [ ] kernel mapping bugfix
     - [ ] syscall
     - [ ] task
     - [x] trap

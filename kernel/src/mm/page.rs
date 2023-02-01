@@ -18,7 +18,7 @@ impl Page {
     pub fn get_bytes(&self) -> &'static mut [u8] {
         unsafe{ 
             core::slice::from_raw_parts_mut(
-                (self.ppn * config::PAGE_SIZE) as *mut u8, 
+                (self.ppn * config::PAGE_SIZE + config::PHYSICAL_MEMORY_OFFSET) as *mut u8, 
                 config::PAGE_SIZE
             ) 
         }

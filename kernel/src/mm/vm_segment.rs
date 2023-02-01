@@ -1,6 +1,6 @@
 use alloc::collections::BTreeMap;
 
-use crate::mm;
+use crate::{mm, config};
 use crate::mm::page_table::{ PageFlag, PageTable };
 
 bitflags! {
@@ -23,16 +23,39 @@ pub struct SegmentImpl {
     vpn_r: usize,
     pages: BTreeMap<usize, mm::Page>,
     map_type: MapType,
-    permission: MapPermission
+    permission: MapPermission,
+    name: &'static str
 }
 
 impl SegmentImpl {
-    pub fn new(vpn_l: usize, vpn_r: usize, map_type: MapType, permission: MapPermission) -> Self {
-        Self { vpn_l, vpn_r, pages: BTreeMap::new(), map_type, permission }
+    pub fn new(name: &'static str, vpn_l: usize, vpn_r: usize, map_type: MapType, permission: MapPermission) -> Self {
+        match map_type {
+            MapType::Framed => {
+                info!( 
+                    "crate {} [{:#x}, {:#x}) -> physic pages",
+                    name,
+                    vpn_l * config::PAGE_SIZE,
+                    vpn_r * config::PAGE_SIZE,
+                )
+            }
+            MapType::Linear { offset } => {
+                info!( 
+                    "map {: <10} [{:#x}, {:#x}) -> [{:#x}, {:#x}) ({} pages)", 
+                    name,
+                    vpn_l * config::PAGE_SIZE as usize,
+                    vpn_r * config::PAGE_SIZE as usize,
+                    vpn_l * config::PAGE_SIZE as usize - offset,
+                    vpn_r * config::PAGE_SIZE as usize - offset,
+                    vpn_r - vpn_l,
+                );
+            }
+        }
+        Self { name, vpn_l, vpn_r, pages: BTreeMap::new(), map_type, permission }
     }
 
     pub fn copy_from(another: &SegmentImpl) -> Self {
         Self { 
+            name: another.name,
             vpn_l: another.vpn_l, 
             vpn_r: another.vpn_r, 
             pages: BTreeMap::new(), 
@@ -49,7 +72,7 @@ impl SegmentImpl {
         let ppn;
         match self.map_type {
             MapType::Linear { offset } => {
-                ppn = vpn - offset;
+                ppn = vpn - offset / config::PAGE_SIZE;
             }
             MapType::Framed => {
                 let page = mm::page_allocator::alloc().unwrap();
@@ -83,6 +106,23 @@ impl SegmentImpl {
     pub fn unmap_all(&mut self, page_table: &mut mm::PageTable) {
         for vpn in self.vpn_l..self.vpn_r {
             self.unmap_one(page_table, vpn);
+        }
+    }
+
+    pub fn fetch_page(&mut self, page_table: &mut mm::PageTable,vpn: usize) -> &mm::Page {
+        if let None = self.pages.get(&vpn) {
+            self.map_one(page_table, vpn);
+        }
+        self.pages.get(&vpn).unwrap()
+    }
+
+    pub fn copy_data(&mut self, page_table: &mut mm::PageTable, data: &[u8]) {
+        let mut start = 0usize;
+        for vpn in self.vpn_l..self.vpn_r {
+            let page = self.fetch_page(page_table, vpn);
+            page.set_bytes(&data[start..data.len().min(start + config::PAGE_SIZE)]);
+            start += config::PAGE_SIZE;
+            if start >= data.len() { break; }
         }
     }
 }

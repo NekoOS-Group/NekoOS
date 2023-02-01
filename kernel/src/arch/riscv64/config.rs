@@ -1,3 +1,5 @@
+#![allow(unused)]
+
 pub const ARCH : &str = "riscv64";
 pub const PHYSICAL_MEMORY_OFFSET: usize = 0xFFFF_FFFF_4000_0000;
 pub const KERNEL_OFFSET:          usize = 0xFFFF_FFFF_C000_0000;

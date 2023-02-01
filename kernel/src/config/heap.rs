@@ -11,7 +11,7 @@ pub fn init() {
     }
 }
 
-#[allow(unused)]
+#[cfg(debug_assertions)]
 pub fn test() {
     use alloc::boxed::Box;
     use alloc::vec::Vec;
@@ -33,5 +33,8 @@ pub fn test() {
     }
     assert!(bss_range.contains(&(v.as_ptr() as usize)));
     drop(v);
-    debug!("heap_test passed!");
+    info!("kernel heap test passed!");
 }
+
+#[cfg(not(debug_assertions))]
+pub fn test() {}
