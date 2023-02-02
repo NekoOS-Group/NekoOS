@@ -23,6 +23,6 @@ pub fn init(memory: &fdt::standard_nodes::Memory) {
     page_allocator::init(memory);
     page_allocator::test();
     kernel_space::init(memory);
-    //kernel_space::on();
-    //kernel_space::test();
+    kernel_space::on();
+    kernel_space::test();
 }

@@ -3,7 +3,7 @@ use crate::mm::KERNEL_SPACE;
 use super::page_table::PageTable;
 
 pub fn init(memory: &fdt::standard_nodes::Memory) {
-    use crate::config::{ skernel, ekernel, stext, etext, srodata, erodata, sdata, edata, sbss, ebss, PHYSICAL_MEMORY_OFFSET, PAGE_SIZE };
+    use crate::config::{ skernel, ekernel, stext, etext, srodata, erodata, sdata, edata, sbss_with_stack, ebss, PHYSICAL_MEMORY_OFFSET, PAGE_SIZE };
     unsafe {
         KERNEL_SPACE = Some(mm::VmManager::new());
         if let Some(inner) = &mut KERNEL_SPACE {
@@ -40,7 +40,7 @@ pub fn init(memory: &fdt::standard_nodes::Memory) {
             inner.push(
                 mm::Segment::new(
                     ".bss",
-                    sbss as usize / PAGE_SIZE,
+                    sbss_with_stack as usize / PAGE_SIZE,
                     ebss as usize / PAGE_SIZE,
                     mm::MapType::Linear { offset: PHYSICAL_MEMORY_OFFSET },
                     mm::MapPermission::R | mm::MapPermission::W
@@ -50,6 +50,9 @@ pub fn init(memory: &fdt::standard_nodes::Memory) {
             for region in memory.regions() {
                 let mut l = region.starting_address as usize;
                 let r = region.starting_address as usize + region.size.unwrap();
+                if l <= skernel as usize - PHYSICAL_MEMORY_OFFSET && r >= ekernel as usize - PHYSICAL_MEMORY_OFFSET {
+                    l = ekernel as usize - PHYSICAL_MEMORY_OFFSET;
+                }
                 inner.push(
                     mm::Segment::new(
                         "region",
@@ -80,27 +83,22 @@ pub fn on() {
 pub fn test() {
     use crate::config::{ stext, etext, srodata, erodata, sdata, edata, PAGE_SIZE };
     unsafe {
-        if let Some(kernel_space) = &KERNEL_SPACE {
-            let mid_text = ((stext as usize + etext as usize) / 2);
-            let mid_rodata = ((srodata as usize + erodata as usize) / 2);
-            let mid_data = ((sdata as usize + edata as usize) / 2);
-            /*
+        if let Some(kernel_space) = &mut KERNEL_SPACE {
+            let mid_text = (stext as usize + etext as usize) / 2;
+            let mid_rodata = (srodata as usize + erodata as usize) / 2;
+            let mid_data = (sdata as usize + edata as usize) / 2;
             assert!(!kernel_space
                 .get_page_table()
-                .query_ppn(mid_text / PAGE_SIZE)
-                .unwrap()
-                .);
+                .query_permission(mid_text / PAGE_SIZE)
+                .is_readable());
             assert!(!kernel_space
-                .page_table
-                .translate(mid_rodata.floor())
-                .unwrap()
-                .writable());
+                .get_page_table()
+                .query_permission(mid_rodata / PAGE_SIZE)
+                .is_writable());
             assert!(!kernel_space
-                .page_table
-                .translate(mid_data.floor())
-                .unwrap()
-                .executable());
-            */
+                .get_page_table()
+                .query_permission(mid_data / PAGE_SIZE)
+                .is_executable());
             info!("kernel space remap test passed!");
         }
     }

@@ -12,6 +12,22 @@ bitflags! {
     }
 }
 
+#[allow(unused)]
+impl MapPermission {
+    pub fn is_readable(&self) -> bool {
+        self.contains( MapPermission::R )
+    }
+    pub fn is_writable(&self) -> bool {
+        self.contains( MapPermission::W )
+    }
+    pub fn is_executable(&self) -> bool {
+        self.contains( MapPermission::X )
+    }
+    pub fn is_user_accessable(&self) -> bool {
+        self.contains( MapPermission::U )
+    }
+}
+
 #[derive(Copy, Clone)]
 pub enum MapType {
     Linear { offset: usize },
@@ -32,21 +48,24 @@ impl SegmentImpl {
         match map_type {
             MapType::Framed => {
                 info!( 
-                    "crate {} [{:#x}, {:#x}) -> physic pages",
+                    "map {: <10} {:?} [{:#x}, {:#x}) -> physic pages {:?}",
                     name,
+                    permission,
                     vpn_l * config::PAGE_SIZE,
                     vpn_r * config::PAGE_SIZE,
+                    permission
                 )
             }
             MapType::Linear { offset } => {
                 info!( 
-                    "map {: <10} [{:#x}, {:#x}) -> [{:#x}, {:#x}) ({} pages)", 
+                    "map {: <10} [{:#x}, {:#x}) -> [{:#x}, {:#x}) ({} pages) {:?}", 
                     name,
                     vpn_l * config::PAGE_SIZE as usize,
                     vpn_r * config::PAGE_SIZE as usize,
                     vpn_l * config::PAGE_SIZE as usize - offset,
                     vpn_r * config::PAGE_SIZE as usize - offset,
                     vpn_r - vpn_l,
+                    permission,
                 );
             }
         }

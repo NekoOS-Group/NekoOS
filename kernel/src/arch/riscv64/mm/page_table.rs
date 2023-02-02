@@ -44,6 +44,21 @@ impl PageTable {
         }
         node.set_entry(vpn & 511, PageTableEntry::new_empty());
     }
+
+    fn query_entry(&self, vpn: usize) -> Option<PageTableEntry>{
+        let indeces = [(vpn >> 18) & 511, (vpn >> 9) & 511, vpn & 511];
+        let mut node = &self.root;
+        for index in indeces {
+            if node.get_entry(index).is_empty() { return None; }
+            let nxt = self.nodes.get(&node.get_entry(index).get_ppn());
+            if let Some(nxt) = nxt {
+                node = nxt;
+            } else {
+                return Some(node.get_entry(index));
+            }
+        }
+        None
+    }
 }
 
 impl mm::page_table::PageTable for PageTable {
@@ -65,29 +80,28 @@ impl mm::page_table::PageTable for PageTable {
     }
 
     fn activate(&self) {
-        use riscv::register::satp;
-        
         info!( "switch page table: root <{:#x}>", self.root.get_ppn() );
         let satp = self.root.get_ppn() | 8usize << 60;
         unsafe {
-            satp::write(satp);
-            core::arch::asm!("sfence.vma");
+            riscv::register::satp::write(satp);
+            riscv::asm::sfence_vma_all();
         }
     }
 
     fn query_ppn(&self, vpn: usize) -> Option<usize>{
-        let indeces = [(vpn >> 18) & 511, (vpn >> 9) & 511, vpn & 511];
-        let mut node = &self.root;
-        for index in indeces {
-            if node.get_entry(index).is_empty() { return None; }
-            let nxt = self.nodes.get(&node.get_entry(index).get_ppn());
-            if let Some(nxt) = nxt {
-                node = nxt;
-            } else {
-                return Some(node.get_ppn());
-            }
+        if let Some(inner) = self.query_entry(vpn) {
+            Some(inner.get_ppn())
+        } else {
+            None
         }
-        None
+    }
+
+    fn query_permission(&self, vpn: usize) -> mm::MapPermission {
+        if let Some(inner) = self.query_entry(vpn) {
+            mm::MapPermission::from_bits(inner.get_flags().bits() & 0b11110).unwrap()
+        } else {
+            mm::MapPermission::from_bits(0).unwrap()
+        }
     }
 }
 
@@ -99,8 +113,10 @@ fn dfs(ppn: usize, vpn: usize, deep: usize, f: &mut core::fmt::Formatter<'_>) ->
         let nxt = node.get_entry(i);
         if nxt.is_valid()  {
             if nxt.is_writable() || nxt.is_readable() || nxt.is_executable() {
+                let mut vpn = vpn << 9 | i;
+                if (vpn >> 26) & 1 != 0 { vpn -= 1usize << 27; }
                 for _ in 0..deep+1 { f.write_fmt(format_args!("   |"))?; }
-                f.write_fmt(format_args!( "{:#x} -> {:?}\n", vpn << 9 | i, nxt))?;
+                f.write_fmt(format_args!( "{:#x} -> {:?}\n", vpn, nxt))?;
             } else {
                 dfs( nxt.get_ppn(), vpn << 9 | i, deep + 1, f)?;
             }

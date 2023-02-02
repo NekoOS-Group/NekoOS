@@ -28,4 +28,5 @@ extern "C" {
     pub fn sbss();
     pub fn ebss();
     pub fn ekernel();
+    pub fn sbss_with_stack();
 }

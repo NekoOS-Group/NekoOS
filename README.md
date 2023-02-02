@@ -81,13 +81,9 @@ make run LOG=DEBUG
     - [ ] dev
     - [ ] fs
     - [ ] mm
-      - [x] riscv64 arch
-      - [x] memory detect
-      - [x] memory segment manager
-      - [x] virtual memory manager 
-      - [x] page allocator
-      - [x] reconstruct page table 
-      - [ ] kernel mapping bugfix
+      - [x] riscv64 arch base code
+      - [ ] riscv32 arch base code
+      - [ ] pagetable linear map optimize
     - [ ] syscall
     - [ ] task
     - [x] trap

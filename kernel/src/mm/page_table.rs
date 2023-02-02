@@ -6,6 +6,7 @@ pub trait PageTable {
     fn unmap(&mut self, vpn: usize);
     fn activate(&self);
     fn query_ppn(&self, vpn: usize) -> Option<usize>;
+    fn query_permission(&self, vpn: usize) -> mm::MapPermission;
 }
 
 pub trait PageFlag {
