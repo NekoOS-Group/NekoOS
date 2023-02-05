@@ -18,9 +18,6 @@ impl VmManagerImpl {
 }
 
 impl VmManagerImpl {
-    pub fn query_ppn(&self, vpn: usize) -> Option<usize> {
-        self.page_table.query_ppn(vpn)
-    }
     pub fn push(&mut self, mut segment: mm::Segment, data: Option<&[u8]>) {
         segment.map_all(&mut self.page_table);
         if let Some(data) = data {

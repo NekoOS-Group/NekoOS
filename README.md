@@ -73,19 +73,25 @@ This is an example on Ubuntu to install the requirement.
 
 you can run with.
 ```
-make run LOG=DEBUG
+make run LOG=INFO
 ```
 
 ## Todo List
   - [ ] kernel
     - [ ] dev
+      - [ ] arch
+      - [ ] console
+      - [ ] cpu
+      - [x] fdt 
+      - [x] timer
     - [ ] fs
     - [ ] mm
       - [x] riscv64 arch base code
       - [ ] riscv32 arch base code
       - [ ] pagetable linear map optimize
     - [ ] syscall
-    - [ ] task
+    - [ ] schedule
+      - [ ] process
     - [x] trap
   - [ ] ulib
 

@@ -3,6 +3,10 @@ use crate::mm::page::Page;
 mod stack_allocator;
 mod buddy_allocator;
 
+#[cfg(debug_assertions)]
+pub type PageAllocatorImpl = stack_allocator::StackAllocator;
+
+#[cfg(not(debug_assertions))]
 pub type PageAllocatorImpl = buddy_allocator::BuddyAllocator;
 
 trait PageAllocator {

@@ -1,4 +1,4 @@
-use crate::{mm, println};
+use crate::mm;
 use crate::mm::KERNEL_SPACE;
 use super::page_table::PageTable;
 
@@ -48,26 +48,26 @@ pub fn init(memory: &fdt::standard_nodes::Memory) {
                 None
             );
             for region in memory.regions() {
-                let mut l = region.starting_address as usize;
-                let r = region.starting_address as usize + region.size.unwrap();
-                if l <= skernel as usize - PHYSICAL_MEMORY_OFFSET && r >= ekernel as usize - PHYSICAL_MEMORY_OFFSET {
-                    l = ekernel as usize - PHYSICAL_MEMORY_OFFSET;
+                let mut l = region.starting_address as usize + PHYSICAL_MEMORY_OFFSET;
+                let r = region.starting_address as usize + region.size.unwrap() + PHYSICAL_MEMORY_OFFSET;
+                if l <= skernel as usize && r >= ekernel as usize {
+                    l = ekernel as usize;
                 }
                 inner.push(
                     mm::Segment::new(
                         "region",
                         l / PAGE_SIZE,
                         r / PAGE_SIZE,
-                        mm::MapType::Linear { offset: 0 },
+                        mm::MapType::Linear { offset: PHYSICAL_MEMORY_OFFSET },
                         mm::MapPermission::R | mm::MapPermission::W
                     ), 
                     None
                 );
             }
-            debug!( "{:?}", inner.get_page_table() );
         }
     }
-    crate::println!("[Neko] kernel space inited.")
+    on();
+    crate::println!("[Neko] kernel space inited.");
 }
 
 pub fn on() {
@@ -76,7 +76,6 @@ pub fn on() {
             inner.get_page_table().activate();
         }
     }
-    println!( "[Neko] kernel space remaped");
 }
 
 #[cfg(debug_assertions)]
@@ -84,9 +83,9 @@ pub fn test() {
     use crate::config::{ stext, etext, srodata, erodata, sdata, edata, PAGE_SIZE };
     unsafe {
         if let Some(kernel_space) = &mut KERNEL_SPACE {
-            let mid_text = (stext as usize + etext as usize) / 2;
-            let mid_rodata = (srodata as usize + erodata as usize) / 2;
-            let mid_data = (sdata as usize + edata as usize) / 2;
+            let mid_text = stext as usize / 2 + etext as usize / 2;
+            let mid_rodata = srodata as usize / 2+ erodata as usize/ 2;
+            let mid_data = sdata as usize / 2 + edata as usize / 2;
             assert!(!kernel_space
                 .get_page_table()
                 .query_permission(mid_text / PAGE_SIZE)

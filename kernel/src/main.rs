@@ -17,6 +17,7 @@ mod dev;
 mod trap;
 mod fs;
 mod mm;
+mod schedule;
 
 #[cfg(riscv64)]
 #[path="arch/riscv64/mod.rs"]
