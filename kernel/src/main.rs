@@ -40,11 +40,9 @@ fn start(hartid: usize, dtb: usize) -> ! {
     bss_init();
 
     println!( "[Neko] Nya~ from hart{} dtb @ {:#x}", hartid, dtb );
-
-    config::logging::init();
-    config::heap::init();
-    config::heap::test();
     
+    config::logging::init();
+
     let fdt = dev::fdt::get_fdt( 
         unsafe {core::slice::from_raw_parts(dtb as *const u8, config::FDT_MAX_SIZE)} 
     );

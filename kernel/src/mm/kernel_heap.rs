@@ -1,17 +1,21 @@
-use crate::config::KERNEL_HEAP_SIZE;
-use buddy_system_allocator::LockedHeap;
+use core::alloc::Layout;
 
-static mut HEAP_SPACE: [u8; KERNEL_HEAP_SIZE] = [0; KERNEL_HEAP_SIZE];
+use buddy_system_allocator::Heap;
 
-#[global_allocator]
-static HEAP_ALLOCATOR: LockedHeap<32> = LockedHeap::empty();
+use crate::mm::KERNEL_HEAP;
+use crate::config;
+
+static mut HEAP_SPACE: [u8; config::KERNEL_HEAP_SIZE] = [0; config::KERNEL_HEAP_SIZE];
+
 pub fn init() {
     unsafe {
-        HEAP_ALLOCATOR
-            .lock()
-            .init(HEAP_SPACE.as_ptr() as usize, KERNEL_HEAP_SIZE);
+        KERNEL_HEAP.lock().init(HEAP_SPACE.as_ptr() as usize, config::KERNEL_HEAP_SIZE);
     }
     crate::println!("[Neko] heap inited.");
+}
+
+pub fn enhence(_heap: &mut Heap<32>, _layout: &Layout) {
+    panic!( "heap out of memory" );
 }
 
 #[cfg(debug_assertions)]

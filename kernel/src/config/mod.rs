@@ -1,7 +1,6 @@
 #![allow(unused)]
 
 mod lang;
-pub mod heap;
 pub mod logging;
 
 pub use crate::arch::config::*;

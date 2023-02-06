@@ -2,9 +2,10 @@ mod page;
 mod vm_segment;
 mod vm_manager;
 
+pub mod kernel_heap;
+pub mod kernel_space;
 pub mod page_table;
 pub mod page_allocator;
-pub mod kernel_space;
 
 pub use page::Page;
 pub use page_allocator::PageAllocatorImpl as PageAllocator;
@@ -19,7 +20,16 @@ pub use vm_manager::VmManagerImpl as VmManager;
 static mut GLOBAL_ALLOCATOR: Option<PageAllocator> = None;
 static mut KERNEL_SPACE: Option<VmManager> = None;
 
+use buddy_system_allocator::LockedHeapWithRescue as Heap;
+
+#[global_allocator]
+static mut KERNEL_HEAP: Heap<32> = Heap::new(
+    kernel_heap::enhence
+);
+
 pub fn init(memory: &fdt::standard_nodes::Memory) {
+    kernel_heap::init();
+    kernel_heap::test();
     page_allocator::init(memory);
     page_allocator::test();
     kernel_space::init(memory);
