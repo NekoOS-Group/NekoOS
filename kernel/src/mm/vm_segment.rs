@@ -101,7 +101,7 @@ impl SegmentImpl {
             }
         }
 
-        page_table.map(vpn, ppn, mm::PageFlag::from_permission(self.permission) );
+        page_table.map(vpn, ppn, 1, mm::PageFlag::from_permission(self.permission));
     }
 
     pub fn unmap_one(&mut self, page_table: &mut mm::PageTable, vpn: usize) {
@@ -114,19 +114,29 @@ impl SegmentImpl {
             _ => {}
         }
         
-        page_table.unmap(vpn);
+        page_table.unmap(vpn, 1);
     }
 
     pub fn map_all(&mut self, page_table: &mut mm::PageTable) {
-        for vpn in self.vpn_l..self.vpn_r {
-            self.map_one(page_table, vpn);
+        match self.map_type {
+            MapType::Linear{ offset } => {
+                page_table.map(
+                    self.vpn_l, 
+                    self.vpn_l - offset / config::PAGE_SIZE,
+                    self.vpn_r - self.vpn_l, 
+                    mm::PageFlag::from_permission(self.permission)
+                );
+            }
+            MapType::Framed => {
+                for vpn in self.vpn_l..self.vpn_r {
+                    self.map_one(page_table, vpn);
+                }
+            }
         }
     }
 
     pub fn unmap_all(&mut self, page_table: &mut mm::PageTable) {
-        for vpn in self.vpn_l..self.vpn_r {
-            self.unmap_one(page_table, vpn);
-        }
+        page_table.unmap(self.vpn_l, self.vpn_r - self.vpn_r)
     }
 
     pub fn fetch_page(&mut self, page_table: &mut mm::PageTable,vpn: usize) -> &mm::Page {

@@ -1,4 +1,7 @@
-pub fn get_fdt(data: &[u8]) -> fdt::Fdt {
+const FDT_MAX_SIZE: usize = 0x2000;
+
+pub fn get_fdt(dtb: usize) -> fdt::Fdt<'static> {
+    let data: &'static [u8] = unsafe{ core::slice::from_raw_parts(dtb as *const u8, FDT_MAX_SIZE) };
     let fdt = fdt::Fdt::new(data).unwrap();
     debug!("This is a devicetree representation of a {}", fdt.root().model());
     debug!("...which is compatible with at least: {}", fdt.root().compatible().first());

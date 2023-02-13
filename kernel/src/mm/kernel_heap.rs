@@ -3,13 +3,12 @@ use core::alloc::Layout;
 use buddy_system_allocator::Heap;
 
 use crate::mm::KERNEL_HEAP;
+use crate::mm::KERNEL_HEAP_SPACE;
 use crate::config;
-
-static mut HEAP_SPACE: [u8; config::KERNEL_HEAP_SIZE] = [0; config::KERNEL_HEAP_SIZE];
 
 pub fn init() {
     unsafe {
-        KERNEL_HEAP.lock().init(HEAP_SPACE.as_ptr() as usize, config::KERNEL_HEAP_SIZE);
+        KERNEL_HEAP.lock().init(KERNEL_HEAP_SPACE.as_ptr() as usize, config::KERNEL_HEAP_SIZE);
     }
     crate::println!("[Neko] heap inited.");
 }

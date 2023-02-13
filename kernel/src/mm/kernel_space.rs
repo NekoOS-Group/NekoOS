@@ -3,7 +3,7 @@ use crate::mm::KERNEL_SPACE;
 use super::page_table::PageTable;
 
 pub fn init(memory: &fdt::standard_nodes::Memory) {
-    use crate::config::{ skernel, ekernel, stext, etext, srodata, erodata, sdata, edata, sbss_with_stack, ebss, PHYSICAL_MEMORY_OFFSET, PAGE_SIZE };
+    use crate::config::{ skernel, ekernel, stext, etext, srodata, erodata, sdata, edata, sbss, ebss, PHYSICAL_MEMORY_OFFSET, PAGE_SIZE };
     unsafe {
         KERNEL_SPACE = Some(mm::VmManager::new());
         if let Some(inner) = &mut KERNEL_SPACE {
@@ -40,7 +40,7 @@ pub fn init(memory: &fdt::standard_nodes::Memory) {
             inner.push(
                 mm::Segment::new(
                     ".bss",
-                    sbss_with_stack as usize / PAGE_SIZE,
+                    sbss as usize / PAGE_SIZE,
                     ebss as usize / PAGE_SIZE,
                     mm::MapType::Linear { offset: PHYSICAL_MEMORY_OFFSET },
                     mm::MapPermission::R | mm::MapPermission::W

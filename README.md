@@ -77,23 +77,28 @@ make run LOG=INFO
 ```
 
 ## Todo List
-  - [ ] kernel
+  - kernel
+    - [x] debug
+      - [x] backtrace
     - [ ] dev
-      - [ ] arch
+      - [ ] block
+      - [ ] char
       - [ ] console
       - [ ] cpu
-      - [x] fdt 
-      - [x] timer
+      - [x] fdt
+      - [x] timer 
     - [ ] fs
     - [ ] mm
-      - [x] riscv64 arch base code
-      - [ ] riscv32 arch base code
-      - [ ] pagetable linear map optimize
+      - [ ] kernel heap(with rescue)
+      - [x] page table(linear map optimized)
+      - [ ] riscv64(sv39, ~~sv48, sv57, sv64~~)
+      - [ ] riscv32(sv32)
     - [ ] syscall
     - [ ] schedule
       - [ ] process
+      - [ ] thread
     - [x] trap
-  - [ ] ulib
+  - ulib
 
 ## Contribute
 

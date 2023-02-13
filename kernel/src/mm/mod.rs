@@ -20,12 +20,12 @@ pub use vm_manager::VmManagerImpl as VmManager;
 static mut GLOBAL_ALLOCATOR: Option<PageAllocator> = None;
 static mut KERNEL_SPACE: Option<VmManager> = None;
 
+use crate::config::KERNEL_HEAP_SIZE;
 use buddy_system_allocator::LockedHeapWithRescue as Heap;
 
 #[global_allocator]
-static mut KERNEL_HEAP: Heap<32> = Heap::new(
-    kernel_heap::enhence
-);
+static mut KERNEL_HEAP: Heap<32> = Heap::new( kernel_heap::enhence );
+static mut KERNEL_HEAP_SPACE: [u8; KERNEL_HEAP_SIZE] = [0; KERNEL_HEAP_SIZE];
 
 pub fn init(memory: &fdt::standard_nodes::Memory) {
     kernel_heap::init();
