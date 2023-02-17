@@ -14,7 +14,6 @@ mod config;
 mod dev;
 mod fs;
 mod mm;
-mod sbi;
 mod schedule;
 mod trap;
 
@@ -32,6 +31,7 @@ mod debug;
 
 #[no_mangle]
 fn start(hartid: usize, dtb: usize) -> ! {
+    dev::timer::init();
     dev::console::init();
 
     println!( "[Neko] Nya~ from hart{} dtb @ {:#x}", hartid, dtb );
@@ -46,5 +46,5 @@ fn start(hartid: usize, dtb: usize) -> ! {
 
     dev::timer::set_next_trigger();
     
-    sbi::shutdown()
+    dev::cpu::shutdown()
 }

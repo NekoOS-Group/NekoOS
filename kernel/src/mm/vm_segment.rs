@@ -1,3 +1,4 @@
+#![allow(unused)]
 use alloc::collections::BTreeMap;
 
 use crate::{mm, config};

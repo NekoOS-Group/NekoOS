@@ -12,13 +12,13 @@ fn panic(_info: &core::panic::PanicInfo) -> ! {
         crate::println!("Panicked: {}", _info.message().unwrap());
     }
     crate::debug::backtrace();
-    crate::sbi::shutdown();
+    crate::dev::cpu::shutdown();
 }   
 
 
 #[cfg(not(debug_assertions))]
 #[panic_handler]
 fn panic(_info: &core::panic::PanicInfo) -> ! {
-    crate::sbi::shutdown();
     crate::println!("Neko Panicked: {}", _info.message().unwrap());
+    crate::dev::cpu::shutdown();
 }

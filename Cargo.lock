@@ -91,6 +91,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2dffe52ecf27772e601905b7522cb4ef790d2cc203488bbd0e2fe85fcb74566d"
 
 [[package]]
+name = "naive-timer"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "034a0ad7deebf0c2abcf2435950a6666c3c15ea9d8fad0c0f48efa8a7f843fed"
+
+[[package]]
 name = "neko-kernel"
 version = "0.0.1"
 dependencies = [
@@ -98,6 +104,7 @@ dependencies = [
  "buddy_system_allocator",
  "fdt",
  "log",
+ "naive-timer",
  "riscv",
 ]
 

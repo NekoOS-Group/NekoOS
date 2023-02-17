@@ -83,21 +83,23 @@ make run LOG=INFO
     - [ ] dev
       - [ ] block
       - [ ] char
-      - [ ] console
+      - [x] console
       - [ ] cpu
       - [x] fdt
       - [x] timer 
     - [ ] fs
     - [ ] mm
-      - [ ] kernel heap(with rescue)
-      - [x] page table(linear map optimized, arch independency)
+      - [x] kernel heap(todo: oom handler)
+      - [x] page table(linear map optimized, arch independent)
       - [x] riscv64(sv39, todo: sv48, sv57, sv64)
       - [ ] riscv32(sv32)
     - [ ] syscall
-    - [ ] schedule
+    - [ ] schedule 
       - [ ] process
+      - [ ] scheduler
+      - [ ] task
       - [ ] thread
-    - [x] trap
+    - [x] trap(arch independent)
   - ulib
 
 ## Contribute

@@ -2,16 +2,18 @@
 
 mod lang;
 
+// arch base config
 pub use crate::arch::config::*;
 
-// global
-pub const PAGE_SIZE: usize = 0x1000;
+// global config
+pub const PAGE_SIZE          : usize = 0x1000;
 
-pub const KERNEL_STACK_SIZE: usize = 0x4000;
-pub const KERNEL_HEAP_SIZE:  usize = 0x800000;
+pub const KERNEL_STACK_SIZE  : usize = 0x4000;
+pub const KERNEL_HEAP_SIZE   : usize = 0x800000;
 
-pub const TICKS_PER_SEC: usize = 100;
+pub const TICKS_PER_SEC      : u64   = 100;
 
+// kernel symbol
 extern "C" {
     pub fn skernel();
     pub fn stext();
