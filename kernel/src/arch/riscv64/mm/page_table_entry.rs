@@ -1,7 +1,8 @@
 #![allow(unused)]
 
 use core::fmt;
-use crate::mm::page_table;
+use crate::mm;
+use mm::page_table::PageTableEntry;
 
 bitflags! {
     pub struct Flags: u8 {
@@ -16,37 +17,45 @@ bitflags! {
     }
 }
 
-impl page_table::PageFlag for Flags {
-    fn from_permission(permission: crate::mm::MapPermission) -> Self {
+impl Flags {
+    pub fn from_permission(permission: mm::MapPermission) -> Self {
         Self::from_bits(permission.bits()).unwrap() | Self::V
+    }
+    pub fn to_permission(&self) -> mm::MapPermission {
+        mm::MapPermission::from_bits(
+            self.bits | mm::MapPermission::FIELD.bits()
+        ).unwrap()
     }
 }
 
 #[derive(Copy, Clone)]
-pub struct PageTableEntry {
+pub struct PageTableEntryImpl {
     bits: usize
 }
 
-impl PageTableEntry {
-    pub fn new_empty() -> Self {
-        PageTableEntry { bits: 0 }
+impl PageTableEntry for PageTableEntryImpl {
+    fn new_empty() -> Self {
+        Self { bits: 0 }
     }
-    pub fn new(ppn: usize, flags: Flags) -> Self {
-        PageTableEntry {
-            bits: ppn << 10 | flags.bits as usize,
+    fn new(ppn: usize, permission: mm::MapPermission) -> Self {
+        Self {
+            bits: ppn << 10 | Flags::from_permission(permission).bits as usize,
         }
+    }
+    fn get_ppn(&self) -> usize {
+        self.bits >> 10 & ((1usize << 44) - 1)
+    }
+    fn get_permission(&self) -> mm::MapPermission {
+        self.get_flags().to_permission()
+    }
+    fn is_valid(&self) -> bool {
+        (self.get_flags() & Flags::V) != Flags::empty()
     }
 }
 
-impl PageTableEntry {
-    pub fn get_ppn(&self) -> usize {
-        self.bits >> 10 & ((1usize << 44) - 1)
-    }
+impl PageTableEntryImpl {
     pub fn get_flags(&self) -> Flags {
         Flags::from_bits(self.bits as u8).unwrap()
-    }
-    pub fn is_valid(&self) -> bool {
-        (self.get_flags() & Flags::V) != Flags::empty()
     }
     pub fn is_readable(&self) -> bool {
         (self.get_flags() & Flags::R) != Flags::empty()
@@ -75,7 +84,7 @@ impl PageTableEntry {
 
 }
 
-impl fmt::Debug for PageTableEntry {
+impl fmt::Debug for PageTableEntryImpl {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let v = if( self.is_valid() ) {"V"} else {"_"};
         let r = if( self.is_readable() ) {"R"} else {"_"};

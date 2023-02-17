@@ -1,6 +1,8 @@
 mod page_table;
 mod page_table_entry;
-mod page_table_node;
 
-pub use page_table::PageTable;
-pub use page_table_entry::Flags as PageFlag;
+use crate::mm;
+
+pub type PageTableEntryImpl = page_table_entry::PageTableEntryImpl;
+pub type PageTableNodeImpl = mm::page_table::PageTableNode<PageTableEntryImpl>;
+pub type PageTableImpl = mm::page_table::PageTableTemplate<3, 9, PageTableEntryImpl>;

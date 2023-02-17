@@ -1,11 +1,11 @@
 use crate::mm;
-use crate::mm::KERNEL_SPACE;
-use super::page_table::PageTable;
+use mm::KERNEL_SPACE;
+use mm::page_table::PageTable;
 
 pub fn init(memory: &fdt::standard_nodes::Memory) {
     use crate::config::{ skernel, ekernel, stext, etext, srodata, erodata, sdata, edata, sbss, ebss, PHYSICAL_MEMORY_OFFSET, PAGE_SIZE };
     unsafe {
-        KERNEL_SPACE = Some(mm::VmManager::new());
+        KERNEL_SPACE = Some(mm::VmSpace::new());
         if let Some(inner) = &mut KERNEL_SPACE {
             inner.push(
                 mm::Segment::new(
@@ -55,7 +55,7 @@ pub fn init(memory: &fdt::standard_nodes::Memory) {
                 }
                 inner.push(
                     mm::Segment::new(
-                        "region",
+                        "free space",
                         l / PAGE_SIZE,
                         r / PAGE_SIZE,
                         mm::MapType::Linear { offset: PHYSICAL_MEMORY_OFFSET },
@@ -80,6 +80,8 @@ pub fn on() {
 
 #[cfg(debug_assertions)]
 pub fn test() {
+    use mm::page_table::PageTableInner;
+    use mm::page_table::PageTableEntry;
     use crate::config::{ stext, etext, srodata, erodata, sdata, edata, PAGE_SIZE };
     unsafe {
         if let Some(kernel_space) = &mut KERNEL_SPACE {
@@ -88,15 +90,17 @@ pub fn test() {
             let mid_data = sdata as usize / 2 + edata as usize / 2;
             assert!(!kernel_space
                 .get_page_table()
-                .query_permission(mid_text / PAGE_SIZE)
-                .is_readable());
+                .query_entry(mid_text / PAGE_SIZE, 3).unwrap()
+                .get_permission().is_readable());
             assert!(!kernel_space
                 .get_page_table()
-                .query_permission(mid_rodata / PAGE_SIZE)
+                .query_entry(mid_rodata / PAGE_SIZE, 3).unwrap()
+                .get_permission()
                 .is_writable());
             assert!(!kernel_space
                 .get_page_table()
-                .query_permission(mid_data / PAGE_SIZE)
+                .query_entry(mid_data / PAGE_SIZE, 3).unwrap()
+                .get_permission()
                 .is_executable());
             info!("kernel space remap test passed!");
         }

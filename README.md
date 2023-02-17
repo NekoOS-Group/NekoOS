@@ -90,8 +90,8 @@ make run LOG=INFO
     - [ ] fs
     - [ ] mm
       - [ ] kernel heap(with rescue)
-      - [x] page table(linear map optimized)
-      - [ ] riscv64(sv39, ~~sv48, sv57, sv64~~)
+      - [x] page table(linear map optimized, arch independency)
+      - [x] riscv64(sv39, todo: sv48, sv57, sv64)
       - [ ] riscv32(sv32)
     - [ ] syscall
     - [ ] schedule
