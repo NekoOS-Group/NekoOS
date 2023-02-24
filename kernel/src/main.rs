@@ -34,6 +34,7 @@ fn start(hartid: usize, dtb: usize) -> ! {
     dev::timer::init();
     dev::console::init();
 
+    println!( "{:#x} {:#x}", crate::arch::register::get_fp(), crate::arch::register::get_sp() );
     println!( "[Neko] Nya~ from hart{} dtb @ {:#x}", hartid, dtb );
 
     let fdt = dev::fdt::get_fdt(dtb);
@@ -46,5 +47,7 @@ fn start(hartid: usize, dtb: usize) -> ! {
 
     dev::timer::set_next_trigger();
     
+    schedule::task::init();
+
     dev::cpu::shutdown()
 }

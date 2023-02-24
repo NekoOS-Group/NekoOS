@@ -90,15 +90,17 @@ make run LOG=INFO
     - [ ] fs
     - [ ] mm
       - [x] kernel heap(todo: oom handler)
-      - [x] page table(linear map optimized, arch independent)
+      - [x] page table
       - [x] riscv64(sv39, todo: sv48, sv57, sv64)
       - [ ] riscv32(sv32)
     - [ ] syscall
-    - [ ] schedule 
-      - [ ] process
+    - [ ] schedule (todo: restructure shcedule into algorithm)
       - [ ] scheduler
       - [ ] task
-      - [ ] thread
+        - [ ] abi
+        - [ ] process
+        - [ ] thread
+        - [ ] idle
     - [x] trap(arch independent)
   - ulib
 

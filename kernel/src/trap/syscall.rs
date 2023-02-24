@@ -3,6 +3,10 @@
 use crate::arch::trap::syscall::*;
 use crate::fs;
 
+pub enum SyscallErorr {
+    
+}
+
 pub fn syscall(syscall_id: usize, args: [usize; 3]) -> isize {
     crate::println!( "syscall {} [{}, {}, {}]", syscall_id, args[0], args[1], args[2] );
     

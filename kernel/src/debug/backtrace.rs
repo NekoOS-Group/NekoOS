@@ -26,5 +26,5 @@ pub fn backtrace() {
         deep += 1;
     }
 
-    info!("=== end Neko stack trace ===");
+    info!("=== end   Neko stack trace ===");
 }

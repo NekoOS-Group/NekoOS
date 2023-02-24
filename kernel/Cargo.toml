@@ -14,3 +14,4 @@ fdt = "*"
 log = "*"
 naive-timer = "*"
 riscv = { git = "https://github.com/rcore-os/riscv", features = ["inline-asm"] }
+spin = "*"

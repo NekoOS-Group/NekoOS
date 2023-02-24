@@ -1,20 +1,20 @@
 use super::PageAllocator;
 use crate::mm::page::Page;
-use buddy_system_allocator::FrameAllocator;
+use buddy_system_allocator::LockedFrameAllocator;
 
 pub struct BuddyAllocator {
-    inner: FrameAllocator
+    inner: LockedFrameAllocator
 }
 
 impl PageAllocator for BuddyAllocator {
     fn new() -> Self {
-        BuddyAllocator { inner: FrameAllocator::new() }
+        BuddyAllocator { inner: LockedFrameAllocator::new() }
     }
     fn add(&mut self, l: usize, r: usize) {
-        self.inner.add_frame(l, r);
+        self.inner.lock().insert(l..r);
     }
     fn alloc(&mut self) -> Option<Page> {
-        if let Some(ppn) = self.inner.alloc(1) {
+        if let Some(ppn) = self.inner.lock().alloc(1) {
             let p = Page::new(ppn);
             p.clear();
             Some(p)
@@ -23,6 +23,6 @@ impl PageAllocator for BuddyAllocator {
         }
     }
     fn dealloc(&mut self, ppn: usize) {
-        self.inner.dealloc(ppn, 1)
+        self.inner.lock().dealloc(ppn, 1)
     }
 }
