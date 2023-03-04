@@ -1,12 +1,15 @@
 use alloc::sync::Arc;
 use crate::mm;
-use crate::schedule::task;
+use crate::task;
+use crate::trap;
 
 pub struct Thread {
     tid: usize,
 
     proc: Arc<task::Process>,
-    vm_space: Arc<mm::VmSpace>
+    vm_space: Arc<mm::VmSpace>,
+
+    context: Option<trap::Context>
 }
 
 impl Thread {
@@ -17,7 +20,16 @@ impl Thread {
             tid: task::tid_allocator::alloc().unwrap(),
             vm_space: proc. get_vm(),
             proc, 
+            context: None
         }
+    }
+
+    pub fn park(&mut self, context: trap::Context) {
+        self.context = Some(context)
+    }
+
+    pub fn prepare(&mut self) -> *mut trap::Context {
+        todo!()
     }
 }
 

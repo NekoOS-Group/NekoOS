@@ -1,8 +1,7 @@
 pub mod syscall;
+pub mod context;
 
-mod context;
-
-use context::TrapContext;
+use context::Context;
 use riscv::register;
 
 use riscv::register::{
@@ -10,7 +9,7 @@ use riscv::register::{
     scause::{Exception, Interrupt, Trap},
 };
 
-core::arch::global_asm!(include_str!("trap_entry.S"));
+core::arch::global_asm!(include_str!("trap_entry.asm"));
 
 pub fn init() {
     extern "C" {
@@ -42,7 +41,7 @@ pub fn disable_trap() {
 }
 
 #[no_mangle]
-pub fn trap_handler(context : &mut TrapContext) -> &mut TrapContext{
+pub fn trap_handler(context : &mut Context) -> &mut Context{
     let scause = register::scause::read();
     let stval = register::stval::read();
     match scause.cause() {

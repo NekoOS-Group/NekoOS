@@ -2,6 +2,8 @@ mod syscall;
 
 pub use syscall::syscall;
 
+pub use crate::arch::trap::context::Context;
+
 pub fn init() {
     crate::arch::trap::init();
     crate::println!("[Neko] trap inited.");

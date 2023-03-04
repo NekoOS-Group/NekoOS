@@ -1,4 +1,4 @@
-use crate::schedule::task_scheduler;
+use crate::task::task_scheduler;
 
 fn idle() -> ! {
     loop {

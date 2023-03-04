@@ -3,6 +3,7 @@ mod vm_segment;
 mod vm_space;
 
 pub mod kernel_heap;
+pub mod kernel_stack;
 pub mod kernel_space;
 pub mod page_table;
 pub mod page_allocator;

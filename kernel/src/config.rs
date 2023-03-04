@@ -1,7 +1,5 @@
 #![allow(unused)]
 
-mod lang;
-
 // arch base config
 pub use crate::arch::config::*;
 

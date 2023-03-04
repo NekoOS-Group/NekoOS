@@ -8,6 +8,9 @@ mod process_init_info;
 mod thread;
 mod tid_allocator;
 
+mod processor;
+
+mod task_scheduler;
 mod idle;
 
 pub use process::Process;
@@ -17,10 +20,12 @@ pub use process_init_info::ProcessInitInfo;
 
 pub use thread::Thread;
 
-pub static PROCESS_TABLE: spin::RwLock<BTreeMap<usize, Arc<Process>>> 
+pub use processor::Processor;
+
+pub static PROCESS_POOL: spin::RwLock<BTreeMap<usize, Arc<Process>>> 
     = spin::RwLock::new(BTreeMap::new());
 
-pub static THREAD_TABLE: spin::RwLock<BTreeMap<usize, Arc<Thread>>> 
+pub static THREAD_POOL: spin::RwLock<BTreeMap<usize, Arc<Thread>>> 
     = spin::RwLock::new(BTreeMap::new());
 
 pub fn init() {
@@ -30,19 +35,19 @@ pub fn init() {
 }
 
 pub fn get_proc(pid: usize) -> Option<Arc<Process>> 
-  { PROCESS_TABLE.read().get(&pid).cloned() }
+  { PROCESS_POOL.read().get(&pid).cloned() }
 
 pub fn get_thread(tid: usize) -> Option<Arc<Thread>> 
-  { THREAD_TABLE.read().get(&tid).cloned() }
+  { THREAD_POOL.read().get(&tid).cloned() }
 
 pub fn add_proc(proc: Process) 
-  { PROCESS_TABLE.write().insert(proc.get_pid(), Arc::new(proc) ); }
+  { PROCESS_POOL.write().insert(proc.get_pid(), Arc::new(proc) ); }
 
 pub fn remove_proc(pid: usize) 
-  { PROCESS_TABLE.write().remove(&pid); }
+  { PROCESS_POOL.write().remove(&pid); }
 
 pub fn add_thread(thread: Thread) 
-  { THREAD_TABLE.write().insert(thread.get_tid(), Arc::new(thread) ); }
+  { THREAD_POOL.write().insert(thread.get_tid(), Arc::new(thread) ); }
 
 pub fn remove_thread(tid: usize) 
-  { THREAD_TABLE.write().remove(&tid); }
+  { THREAD_POOL.write().remove(&tid); }
