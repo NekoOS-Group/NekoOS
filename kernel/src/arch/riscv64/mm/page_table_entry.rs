@@ -1,7 +1,7 @@
 #![allow(unused)]
 
 use core::fmt;
-use crate::mm;
+use crate::{mm, println};
 use mm::page_table::PageTableEntry;
 
 bitflags! {
@@ -23,7 +23,7 @@ impl Flags {
     }
     pub fn to_permission(&self) -> mm::MapPermission {
         mm::MapPermission::from_bits(
-            self.bits | mm::MapPermission::FIELD.bits()
+            self.bits & mm::MapPermission::FIELD.bits()
         ).unwrap()
     }
 }
@@ -50,6 +50,9 @@ impl PageTableEntry for PageTableEntryImpl {
     }
     fn is_valid(&self) -> bool {
         (self.get_flags() & Flags::V) != Flags::empty()
+    }
+    fn is_leaf(&self) -> bool {
+        self.is_valid() && ! self.get_permission().is_empty()
     }
 }
 

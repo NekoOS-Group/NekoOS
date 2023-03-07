@@ -1,5 +1,6 @@
 use alloc::vec::Vec;
-use crate::mm::page::Page;
+
+use super::Allocator;
 
 pub struct StackAllocator {
     l: usize,
@@ -7,7 +8,7 @@ pub struct StackAllocator {
     stack :Vec<usize>
 }
 
-impl super::PageAllocator for StackAllocator {
+impl Allocator for StackAllocator {
     fn new() -> Self {
         StackAllocator { l: 0, r: 0, stack: Vec::new() }
     }
@@ -15,12 +16,12 @@ impl super::PageAllocator for StackAllocator {
         self.l = l;
         self.r = r;
     }
-    fn alloc(&mut self) -> Option<Page> {
+    fn alloc(&mut self) -> Option<usize> {
         if self.stack.len() > 0 {
-            Some(Page::new(self.stack.pop().unwrap() ))
+            Some(self.stack.pop().unwrap())
         } else if self.l != self.r {
             self.l += 1;
-            Some(Page::new(self.l - 1))
+            Some(self.l - 1)
         } else {
             None
         }

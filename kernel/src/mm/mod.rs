@@ -1,9 +1,9 @@
 mod page;
 mod vm_segment;
 mod vm_space;
+mod kernel_stack;
 
 pub mod kernel_heap;
-pub mod kernel_stack;
 pub mod kernel_space;
 pub mod page_table;
 pub mod page_allocator;
@@ -11,6 +11,7 @@ pub mod page_allocator;
 pub use page::Page;
 pub use vm_segment::MapType;
 pub use vm_segment::MapPermission;
+pub use kernel_stack::KernelStack;
 
 pub type PageTable      = crate::arch::mm::PageTableImpl;
 pub type PageTableEntry = crate::arch::mm::PageTableEntryImpl;

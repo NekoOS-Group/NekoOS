@@ -1,33 +1,37 @@
+use crate::algorithm::allocator;
+use allocator::Allocator;
 use crate::mm::page::Page;
 
-mod stack_allocator;
-mod buddy_allocator;
-
 #[cfg(debug_assertions)]
-pub type PageAllocatorImpl = stack_allocator::StackAllocator;
+pub type PageAllocatorImpl = allocator::StackAllocator;
 
 #[cfg(not(debug_assertions))]
-pub type PageAllocatorImpl = buddy_allocator::BuddyAllocator;
+pub type PageAllocatorImpl = allocator::BuddyAllocator;
 
-trait PageAllocator {
-    fn new() -> Self;
-    fn add(&mut self, l: usize, r:usize);
-    fn alloc(&mut self) -> Option<Page>;
-    fn dealloc(&mut self, ppn: usize);
-}
 
 use crate::mm::GLOBAL_ALLOCATOR;
 
 pub fn alloc() -> Option<Page> {
-    unsafe{ if let Some(ref mut inner) = GLOBAL_ALLOCATOR {
-        inner.alloc()
-    } else { None } }
+    unsafe{ 
+        GLOBAL_ALLOCATOR.as_mut().map(
+            |inner| { inner.alloc() }
+        ).unwrap().map(
+            |ppn| { 
+                let x = Page::new(ppn);
+                x.clear(); 
+                x 
+            }
+        )
+    }
 }
 
 pub fn dealloc(ppn: usize) {
-    unsafe{ if let Some(ref mut inner) = GLOBAL_ALLOCATOR {
-        inner.dealloc(ppn);
-    } else {} }}
+    unsafe{ 
+        GLOBAL_ALLOCATOR.as_mut().map(
+            |inner| { inner.dealloc(ppn); }
+        );
+    }
+}
 
 pub fn init(memory: &fdt::standard_nodes::Memory) {
     use crate::config::{skernel, ekernel, PAGE_SIZE, MEMORY_START_ADDRESS, PHYSICAL_MEMORY_OFFSET};
@@ -58,9 +62,11 @@ pub fn add(l: usize, r:usize) {
         r * PAGE_SIZE,
         r - l
     );
-    unsafe{ if let Some(ref mut inner) = GLOBAL_ALLOCATOR {
-        inner.add(l, r);
-    } else {} };
+    unsafe{ 
+        GLOBAL_ALLOCATOR.as_mut().map(
+            |inner| { inner.add(l, r); }
+        );
+    }
 }
 
 #[cfg(debug_assertions)]

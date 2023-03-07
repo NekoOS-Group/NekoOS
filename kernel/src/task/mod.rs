@@ -1,15 +1,17 @@
 use alloc::collections::BTreeMap;
 use alloc::sync::Arc;
 
+use crate::algorithm::allocator;
+use crate::config;
+use crate::dev;
+use crate::println;
+
 mod process;
 mod pid_allocator;
 mod process_init_info;
-
 mod thread;
 mod tid_allocator;
-
 mod processor;
-
 mod task_scheduler;
 mod idle;
 
@@ -19,35 +21,49 @@ pub use process::Stats as ProcessStats;
 pub use process_init_info::ProcessInitInfo;
 
 pub use thread::Thread;
-
 pub use processor::Processor;
 
-pub static PROCESS_POOL: spin::RwLock<BTreeMap<usize, Arc<Process>>> 
+pub type ProcessRef = Arc<spin::Mutex<Process>>;
+pub type ThreadRef  = Arc<spin::Mutex<Process>>;
+
+pub static mut PID_ALLOCATOR: Option<allocator::BuddyAllocator> = None;
+pub static mut TID_ALLOCATOR: Option<allocator::BuddyAllocator> = None;
+
+pub static PROCESS_POOL: spin::RwLock<BTreeMap<usize, ProcessRef>> 
     = spin::RwLock::new(BTreeMap::new());
 
-pub static THREAD_POOL: spin::RwLock<BTreeMap<usize, Arc<Thread>>> 
+pub static THREAD_POOL: spin::RwLock<BTreeMap<usize, ThreadRef>> 
     = spin::RwLock::new(BTreeMap::new());
+
+const INIT: Option<Processor> = None;
+pub static mut PROCESSOR_POOL: [Option<Processor>; config::MAX_CPU_CORE]
+    = [INIT; config::MAX_CPU_CORE];
 
 pub fn init() {
     pid_allocator::init();
     tid_allocator::init();
     idle::init();
+    println!( "[Neko] task inited(todo)" );
 }
 
-pub fn get_proc(pid: usize) -> Option<Arc<Process>> 
-  { PROCESS_POOL.read().get(&pid).cloned() }
+pub fn get_proc(pid: usize) -> Option<ProcessRef> 
+    { PROCESS_POOL.read().get(&pid).cloned() }
 
-pub fn get_thread(tid: usize) -> Option<Arc<Thread>> 
-  { THREAD_POOL.read().get(&tid).cloned() }
-
-pub fn add_proc(proc: Process) 
-  { PROCESS_POOL.write().insert(proc.get_pid(), Arc::new(proc) ); }
+pub fn get_thread(tid: usize) -> Option<ThreadRef> 
+    { THREAD_POOL.read().get(&tid).cloned() }
 
 pub fn remove_proc(pid: usize) 
-  { PROCESS_POOL.write().remove(&pid); }
-
-pub fn add_thread(thread: Thread) 
-  { THREAD_POOL.write().insert(thread.get_tid(), Arc::new(thread) ); }
+    { PROCESS_POOL.write().remove(&pid); }
 
 pub fn remove_thread(tid: usize) 
-  { THREAD_POOL.write().remove(&tid); }
+    { THREAD_POOL.write().remove(&tid); }
+
+pub fn current_thread() -> Option<ThreadRef> {  
+    let id = dev::cpu::get_id();
+    unsafe{ PROCESSOR_POOL[id].as_ref().map(|v| v.current_thread.clone() ) }
+}
+
+pub fn current_processor() -> &'static mut Processor {
+    let id = dev::cpu::get_id();
+    unsafe{ PROCESSOR_POOL[id].as_mut().unwrap() }
+}

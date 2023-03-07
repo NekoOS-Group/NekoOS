@@ -12,6 +12,7 @@ pub trait PageTableEntry: core::fmt::Debug + Copy {
     fn get_ppn(&self) -> usize;
     fn get_permission(&self) -> mm::MapPermission;
     fn is_valid(&self) -> bool;
+    fn is_leaf(&self) -> bool;
 }
 
 pub trait PageTableInner<T> 
@@ -20,7 +21,7 @@ pub trait PageTableInner<T>
     fn new() -> Self;
     fn map(&mut self, vpn: usize, ppn: usize, length: usize, permission: mm::MapPermission);
     fn unmap(&mut self, vpn: usize, length: usize);
-    fn query_entry(&self, vpn: usize, deep: usize) -> Option<T>;
+    fn query(&self, vpn: usize) -> Option<T>;
 }
 
 pub trait PageTable<T> : PageTableInner<T> + core::fmt::Debug 

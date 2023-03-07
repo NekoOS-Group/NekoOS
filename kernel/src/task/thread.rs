@@ -1,5 +1,6 @@
 use alloc::sync::Arc;
 use crate::mm;
+use crate::mm::page_table::PageTable;
 use crate::task;
 use crate::trap;
 
@@ -7,7 +8,7 @@ pub struct Thread {
     tid: usize,
 
     proc: Arc<task::Process>,
-    vm_space: Arc<mm::VmSpace>,
+    vm_space: Arc<spin::Mutex<mm::VmSpace>>,
 
     context: Option<trap::Context>
 }
@@ -18,7 +19,7 @@ impl Thread {
     pub fn new(proc: Arc<task::Process>) -> Self {
         Self { 
             tid: task::tid_allocator::alloc().unwrap(),
-            vm_space: proc. get_vm(),
+            vm_space: proc.get_vm(),
             proc, 
             context: None
         }
@@ -29,7 +30,9 @@ impl Thread {
     }
 
     pub fn prepare(&mut self) -> *mut trap::Context {
-        todo!()
+        self.vm_space.lock().get_page_table().activate();
+        let context = self.context.take().unwrap();
+        task::current_processor().kernel_stack.push_context(context)
     }
 }
 

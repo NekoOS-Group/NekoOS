@@ -1,7 +1,7 @@
 # used
 ARCH          ?= riscv64
 MODE          ?= release
-LOG           ?= 
+LOG           ?= INFO
 GRAPHIC       ?= off
 SMP           ?= 1
 # unused
@@ -18,8 +18,10 @@ export LOG
 # target
 ifeq ($(ARCH), riscv64)
 	TARGET := riscv64gc-unknown-none-elf
+	GDB_ARCH := riscv:rv64
 else ifeq ($(ARCH), riscv32)
 	TARGET := riscv32gc-unknown-none-elf
+	GDB_ARCH := riscv:rv64
 endif
 
 KERNEL_NAME := neko-kernel
@@ -53,7 +55,7 @@ ifeq ($(GRAPHIC), off)
 	QEMU_OPTIONS += -nographic
 endif
 
-GDB := gdb
+GDB := gdb-multiarch
 QEMU := qemu-system-$(ARCH)
 OBJCOPY := rust-objcopy --binary-architecture=$(ARCH)
 
@@ -68,10 +70,16 @@ run: build
 	@$(QEMU) $(QEMU_OPTIONS) -kernel $(KERNEL_BIN)
 
 debug: build
-	@$(QEMU) $(QEMU_OPTIONS) $(KERNEL_BIN) -S -s &
-	@$(GDB) $(KERNEL_ELF) \
-		-ex 'target remote localhost:1234'
-		-ex 'continue' \
+	@screen -dm $(QEMU) $(QEMU_OPTIONS) -kernel $(KERNEL_BIN) \
+		-S -gdb tcp::1234
+	@echo "Debug begin and screen detached"
+	@$(GDB) \
+		-ex 'set architecture ${GDB_ARCH}' \
+		-ex 'file ${KERNEL_ELF}' \
+		-ex 'target remote localhost:1234' \
+		-ex 'b start' \
+		-ex 'continue' 
+	killall ${QEMU}
 
 clean:
 	@cargo clean

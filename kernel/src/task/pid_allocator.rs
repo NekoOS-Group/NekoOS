@@ -1,29 +1,31 @@
+use crate::algorithm::allocator::BuddyAllocator;
+use crate::algorithm::allocator::Allocator;
 use crate::config;
+use crate::println;
 
-type PidAllocatorImpl = buddy_system_allocator::LockedFrameAllocator;
-
-pub static mut PID_ALLOCATOR: Option<PidAllocatorImpl> = None;
+use super::PID_ALLOCATOR;
 
 pub fn init() {
     unsafe {
-        if let Some(inner) = &PID_ALLOCATOR {
-            inner.lock().insert(0..config::MAX_PROCESS);
-        }
+        PID_ALLOCATOR = Some( BuddyAllocator::new() );
+        PID_ALLOCATOR.as_mut().map( |inner| 
+            { inner.add(0, config::MAX_THREAD); }
+        );
     }
 }
 
 pub fn alloc() -> Option<usize> {
     unsafe {
-        if let Some(inner) = &PID_ALLOCATOR {
-            inner.lock().alloc(1)
-        } else { None }
+        PID_ALLOCATOR.as_mut().map( |inner| 
+            { inner.alloc() }
+        ).unwrap()
     }
 }
 
 pub fn dealloc(pid: usize) {
     unsafe {
-        if let Some(inner) = &PID_ALLOCATOR {
-            inner.lock().dealloc(pid, 0)
-        }
+        PID_ALLOCATOR.as_mut().map( |inner| 
+            { inner.dealloc(pid) }
+        );
     }
 }

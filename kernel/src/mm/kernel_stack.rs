@@ -8,7 +8,7 @@ pub struct KernelStack {
 }
 
 impl KernelStack {
-    fn push_context(&mut self, context: Context) -> *mut Context {
+    pub fn push_context(&mut self, context: Context) -> *mut Context {
         let pt = self.stack.as_ptr() as usize + size_of::<Self>() - size_of::<Context>();
         let ret = pt as *mut Context;
 

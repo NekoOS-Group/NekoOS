@@ -37,14 +37,14 @@ pub struct Process {
     children:            Vec<Arc<Process>>,
     threads:             Vec<Arc<task::Thread>>,
 
-    vm_space:            Arc<mm::VmSpace>,
+    vm_space:            Arc<spin::Mutex<mm::VmSpace>>,
 }
 
 impl Process {
     pub fn get_pid(&self) -> usize { self.pid }
-    pub fn get_vm(&self) -> Arc<mm::VmSpace> { self.vm_space.clone() }
+    pub fn get_vm(&self) -> Arc<spin::Mutex<mm::VmSpace>> { self.vm_space.clone() }
 
-    pub fn new(parent: Option<Arc<Process>>, vm: Arc::<mm::VmSpace>, infos: Infos) -> Self {
+    pub fn new(parent: Option<Arc<Process>>, vm: Arc::<spin::Mutex<mm::VmSpace>>, infos: Infos) -> Self {
         Self { 
             pid: task::pid_allocator::alloc().unwrap(), 
             state: State::Uninited, 
@@ -53,7 +53,7 @@ impl Process {
             parent, 
             children: Vec::new(), 
             threads: Vec::new(), 
-            vm_space: vm, 
+            vm_space: vm,
         }
     }
 

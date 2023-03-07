@@ -9,3 +9,4 @@ pub const EARLY_MEMORY_END:       usize = 0x88000000;
 
 pub const MAX_PROCESS:            usize = 1 << 22;
 pub const MAX_THREAD:             usize = 1 << 22;
+pub const MAX_CPU_CORE:           usize = 8;

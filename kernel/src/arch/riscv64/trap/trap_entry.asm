@@ -32,11 +32,14 @@ __traps_user:
     # read user stack from sscratch and save it on the kernel stack
     csrr t2, sscratch
     sd t2, 2*8(sp)
-    # set input argument of trap_handler(cx: &mut TrapContext)
+    # set input argument of trap_handler(cx: &mut Context)
     mv a0, sp
     call trap_handler
 
+# __restore(context *Context)
+#     register <- context 
 __restore:
+    mv sp, a0
     # now sp->kernel stack(after allocated), sscratch->user stack
     # restore sstatus/sepc
     ld t0, 32*8(sp)

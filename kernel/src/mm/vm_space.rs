@@ -31,6 +31,7 @@ impl<T> VmSpaceImpl<T>
         }
         self.segments.push(segment);
     }
+    
     pub fn get_page_table(&mut self) -> &mut T {
         &mut self.page_table
     }

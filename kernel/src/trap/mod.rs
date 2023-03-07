@@ -9,9 +9,16 @@ pub fn init() {
     crate::println!("[Neko] trap inited.");
 }
 
-pub fn init_timer_interrupt() {
-    crate::arch::trap::init_timer_interrupt();
-    crate::println!("[Neko] timer interrupt inited.");
+pub fn enable_timer_interrupt() {
+    crate::arch::trap::enable_stimer_interrupt();
+    crate::arch::trap::enable_utimer_interrupt();
+    info!("timer interrupt enabled.");
+}
+
+pub fn disable_timer_interrupt() {
+    crate::arch::trap::disable_stimer_interrupt();
+    crate::arch::trap::disable_utimer_interrupt();
+    info!("[Neko] timer interrupt disabled.");
 }
 
 pub fn enable_trap() {
@@ -19,7 +26,6 @@ pub fn enable_trap() {
     info!("trap enabled.");
 }
 
-#[allow(unused)]
 pub fn disable_trap() {
     crate::arch::trap::disable_trap();
     info!("trap disabled.");

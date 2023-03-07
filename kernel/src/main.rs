@@ -34,7 +34,6 @@ mod debug;
 
 #[no_mangle]
 fn start(hartid: usize, dtb: usize) -> ! {
-    dev::timer::init();
     dev::console::init();
 
     println!( "[Neko] Nya~ from hart{} dtb @ {:#x}", hartid, dtb );
@@ -43,13 +42,15 @@ fn start(hartid: usize, dtb: usize) -> ! {
 
     mm::init(&fdt.memory());
 
+    dev::timer::init();
+    
     trap::init();
-    trap::init_timer_interrupt();
     trap::enable_trap();
+    trap::enable_timer_interrupt();
+
+    task::init();
 
     dev::timer::set_next_trigger();
-    
-    task::init();
 
     dev::cpu::shutdown()
 }

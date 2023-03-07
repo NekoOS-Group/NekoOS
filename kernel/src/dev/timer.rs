@@ -1,4 +1,3 @@
-#![allow(unused)]
 use crate::config::TICKS_PER_SEC;
 pub use crate::arch::timer::set_timer;
 pub use crate::arch::timer::get_clock;
@@ -26,8 +25,8 @@ pub fn init() {
 
 pub fn schedule(
     time: core::time::Duration, 
-    closure: impl FnOnce(core::time::Duration) + Send + Sync + 'static) 
-{
+    closure: impl FnOnce(core::time::Duration) + Send + Sync + 'static
+) {
     unsafe {
         if let Some(inner) = &mut TIMER {
             inner.add(time, closure);

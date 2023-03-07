@@ -90,16 +90,16 @@ pub fn test() {
             let mid_data = sdata as usize / 2 + edata as usize / 2;
             assert!(!kernel_space
                 .get_page_table()
-                .query_entry(mid_text / PAGE_SIZE, 3).unwrap()
+                .query(mid_text / PAGE_SIZE).unwrap()
                 .get_permission().is_readable());
             assert!(!kernel_space
                 .get_page_table()
-                .query_entry(mid_rodata / PAGE_SIZE, 3).unwrap()
+                .query(mid_rodata / PAGE_SIZE).unwrap()
                 .get_permission()
                 .is_writable());
             assert!(!kernel_space
                 .get_page_table()
-                .query_entry(mid_data / PAGE_SIZE, 3).unwrap()
+                .query(mid_data / PAGE_SIZE).unwrap()
                 .get_permission()
                 .is_executable());
             info!("kernel space remap test passed!");
