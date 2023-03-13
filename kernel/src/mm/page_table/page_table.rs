@@ -4,7 +4,6 @@ use super::PageTableEntry;
 use super::PageTableNode as Node;
 
 use crate::mm;
-use crate::println;
 
 pub struct PageTableTemplate<const LEVEL: usize, const ORDER: usize, T> 
     where T: PageTableEntry + 'static
@@ -96,6 +95,7 @@ impl<const LEVEL: usize, const ORDER: usize, T>
             let vpn = vpn + offset;
             let ppn = ppn + offset;
             let deep = LEVEL - (vpn & (!vpn + 1)).ilog2().min( (length - offset).ilog2() ) as usize / ORDER;
+            debug!( "set entry vpn:{:#x} ppn:{:#x} deep:{deep}", vpn, ppn );
             if let Some(_) = Self::query_entry(&self, vpn, deep) { panic!( "map vm twice"); }
             self.insert_entry(vpn, T::new(ppn, permissions), deep);
             offset += 1 << ((LEVEL - deep) * ORDER);

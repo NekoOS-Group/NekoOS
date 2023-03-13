@@ -1,0 +1,27 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "shell",
+			"command": "echo qwq & make debug MODE=debug",
+			"label": "debug_begin",
+			"isBackground": true,
+			"problemMatcher": {
+				"pattern": {
+                    "regexp": "qwq",
+                    "line": 1,
+                },
+				"background": {
+					"activeOnStart": true,
+					"beginsPattern": "qwq",
+					"endsPattern": "qwq"
+				}
+			}
+		},
+		{
+			"type": "shell",
+			"command": "killall qemu-system-riscv64",
+			"label": "debug_end"
+		}
+	]
+}

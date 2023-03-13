@@ -1,24 +1,20 @@
-use crate::task::{Processor, Thread};
-use crate::algorithm::schedule;
+use crate::task::ThreadRef;
+use crate::algorithm::scheduler;
 
 struct TaskScheduler {
 
 }
 
-impl schedule::SchePreemptor for Thread {
-    
+impl scheduler::ScheEntity for ThreadRef {
+    fn get_priority(&self) -> usize {
+        0
+    }
 }
 
-impl schedule::SchePriority for Thread {
-
-}
-
-impl schedule::ScheResource for Processor {
-
-}
-
-impl schedule::Scheduler<Processor, Thread> for TaskScheduler {
-    
+impl scheduler::Scheduler<ThreadRef> for TaskScheduler {
+    fn schedule(&mut self) -> Option<ThreadRef> {
+        todo!()
+    }
 }
 
 pub fn schedule() {

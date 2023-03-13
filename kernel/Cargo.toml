@@ -9,6 +9,7 @@ description = "a rust OS for riscv64 only which is KAWAII"
 
 [dependencies]
 bitflags = "*"
+bitmaps = { version = "*", default-features = false}
 buddy_system_allocator = { version = "*", features = ["const_fn"]}
 fdt = "*"
 log = "*"

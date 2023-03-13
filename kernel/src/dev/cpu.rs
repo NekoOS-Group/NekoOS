@@ -6,7 +6,7 @@ pub trait CPU {
     fn halt();
 }
 
-use crate::arch::cpu::CPUImpl;
+use crate::arch::dev::cpu::CPUImpl;
 
 pub fn shutdown() -> ! { CPUImpl::shutdown() }
 

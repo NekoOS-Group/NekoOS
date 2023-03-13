@@ -1,7 +1,7 @@
 use crate::config::TICKS_PER_SEC;
-pub use crate::arch::timer::set_timer;
-pub use crate::arch::timer::get_clock;
-pub use crate::arch::timer::CLOCK_PER_SEC;
+pub use crate::arch::dev::timer::set_timer;
+pub use crate::arch::dev::timer::get_clock;
+pub use crate::arch::dev::timer::CLOCK_PER_SEC;
 const NANO_PER_SEC: u64 = 1_000_000_000;
 
 use naive_timer::Timer;

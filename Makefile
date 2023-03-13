@@ -17,17 +17,17 @@ export LOG
 
 # target
 ifeq ($(ARCH), riscv64)
-	TARGET := riscv64gc-unknown-none-elf
-	GDB_ARCH := riscv:rv64
+	TARGET    := riscv64gc-unknown-none-elf
+	GDB_ARCH  := riscv:rv64
 else ifeq ($(ARCH), riscv32)
-	TARGET := riscv32gc-unknown-none-elf
-	GDB_ARCH := riscv:rv64
+	TARGET    := riscv32gc-unknown-none-elf
+	GDB_ARCH  := riscv:rv64
 endif
 
-KERNEL_NAME := neko-kernel
-KERNEL_PATH := target/$(TARGET)/$(MODE)
-KERNEL_BIN := $(KERNEL_PATH)/$(KERNEL_NAME).bin
-KERNEL_ELF := $(KERNEL_PATH)/$(KERNEL_NAME)
+KERNEL_NAME   := neko-kernel
+KERNEL_PATH   := target/$(TARGET)/$(MODE)
+KERNEL_BIN    := $(KERNEL_PATH)/$(KERNEL_NAME).bin
+KERNEL_ELF    := $(KERNEL_PATH)/$(KERNEL_NAME)
 
 # build options
 BUILD_OPTION := \
@@ -56,6 +56,7 @@ ifeq ($(GRAPHIC), off)
 endif
 
 GDB := gdb-multiarch
+LLDB := lldb
 QEMU := qemu-system-$(ARCH)
 OBJCOPY := rust-objcopy --binary-architecture=$(ARCH)
 
@@ -70,16 +71,26 @@ run: build
 	@$(QEMU) $(QEMU_OPTIONS) -kernel $(KERNEL_BIN)
 
 debug: build
+	@echo "Debug Begin"
+	@$(QEMU) $(QEMU_OPTIONS) -kernel $(KERNEL_BIN) \
+		-S -gdb tcp::1234
+
+debug-screen: build
+	@echo "Debug Begin"
 	@screen -dm $(QEMU) $(QEMU_OPTIONS) -kernel $(KERNEL_BIN) \
 		-S -gdb tcp::1234
-	@echo "Debug begin and screen detached"
-	@$(GDB) \
-		-ex 'set architecture ${GDB_ARCH}' \
-		-ex 'file ${KERNEL_ELF}' \
+
+gdb: debug-screen
+	@$(GDB) ${KERNEL_ELF} \
 		-ex 'target remote localhost:1234' \
 		-ex 'b start' \
-		-ex 'continue' 
-	killall ${QEMU}
+		-ex 'c' \
+		-ex 'layout split'
+
+lldb: debug-screen
+	@$(LLDB) ${KERNEL_ELF}\
+		-o 'gdb-remote localhost:1234' \
+		-o 'b start'
 
 clean:
 	@cargo clean

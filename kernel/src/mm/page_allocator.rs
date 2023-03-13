@@ -2,12 +2,7 @@ use crate::algorithm::allocator;
 use allocator::Allocator;
 use crate::mm::page::Page;
 
-#[cfg(debug_assertions)]
-pub type PageAllocatorImpl = allocator::StackAllocator;
-
-#[cfg(not(debug_assertions))]
 pub type PageAllocatorImpl = allocator::BuddyAllocator;
-
 
 use crate::mm::GLOBAL_ALLOCATOR;
 

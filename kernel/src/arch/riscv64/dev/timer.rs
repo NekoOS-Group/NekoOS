@@ -1,4 +1,4 @@
-pub use super::sbi::set_timer;
+pub use super::super::sbi::set_timer;
 
 pub const CLOCK_PER_SEC: u64 = 100000000;
 

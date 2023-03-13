@@ -1,4 +1,4 @@
-use super::sbi;
+use super::super::sbi;
 
 pub struct Stdout;
 

@@ -1,5 +1,5 @@
 
-use crate::arch::io::Stdout;
+use crate::arch::dev::io::Stdout;
 use core::fmt::Write;
 
 pub fn print(args: core::fmt::Arguments) {

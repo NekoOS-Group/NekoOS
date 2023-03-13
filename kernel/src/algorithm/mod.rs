@@ -1,2 +1,2 @@
 pub mod allocator;
-pub mod schedule;
+pub mod scheduler;

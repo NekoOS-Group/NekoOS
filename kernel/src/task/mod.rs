@@ -24,7 +24,7 @@ pub use thread::Thread;
 pub use processor::Processor;
 
 pub type ProcessRef = Arc<spin::Mutex<Process>>;
-pub type ThreadRef  = Arc<spin::Mutex<Process>>;
+pub type ThreadRef  = Arc<spin::Mutex<Thread>>;
 
 pub static mut PID_ALLOCATOR: Option<allocator::BuddyAllocator> = None;
 pub static mut TID_ALLOCATOR: Option<allocator::BuddyAllocator> = None;
