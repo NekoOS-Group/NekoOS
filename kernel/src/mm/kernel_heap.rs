@@ -3,14 +3,21 @@ use core::alloc::Layout;
 use buddy_system_allocator::Heap;
 
 use crate::mm::KERNEL_HEAP;
-use crate::mm::KERNEL_HEAP_SPACE;
 use crate::config;
 
 pub fn init() {
     unsafe {
-        KERNEL_HEAP.lock().init(KERNEL_HEAP_SPACE.as_ptr() as usize, config::KERNEL_HEAP_SIZE);
+        KERNEL_HEAP.lock().init(
+            config::bootheap as usize,
+            config::bootheapend as usize - config::bootheap as usize
+        );
     }
-    crate::println!("[Neko] heap inited.");
+    crate::println!(
+        "[Neko] heap inited [{:#x}, {:#x}) ({} pages)",
+        config::bootheap as usize,
+        config::bootheapend as usize,
+        (config::bootheapend as usize - config::bootheap as usize) / config::PAGE_SIZE
+    );
 }
 
 pub fn enhence(_heap: &mut Heap<32>, _layout: &Layout) {

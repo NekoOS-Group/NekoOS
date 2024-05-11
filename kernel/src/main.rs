@@ -20,13 +20,14 @@ mod mm;
 mod task;
 mod trap;
 
-#[cfg(riscv64)]
+#[cfg(target_arch="riscv64")]
 #[path="arch/riscv64/mod.rs"]
 mod arch;
 
-#[cfg(riscv32)]
+#[cfg(target_arch="riscv32")]
 #[path="arch/riscv32/mod.rs"]
 mod arch;
+
 
 #[allow(unused)]
 #[cfg(debug_assertions)]
@@ -36,7 +37,13 @@ mod debug;
 fn start(hartid: usize, dtb: usize) -> ! {
     dev::console::init();
 
-    println!( "[Neko] Nya~ from hart{} dtb @ {:#x}", hartid, dtb );
+    println!( "[Neko] Welcome to NekoOS, Nya~ ");
+    println!( 
+        "[Neko] hart{} boot with {{ stack: [{:#x}, {:#x}) }}", 
+        hartid,
+        config::bootstack as usize + hartid * 4096 * 4, 
+        config::bootstack as usize + (hartid + 1) * 4096 * 4,
+    );
 
     let fdt = dev::fdt::get_fdt(dtb);
 

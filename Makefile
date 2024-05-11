@@ -31,7 +31,7 @@ KERNEL_ELF    := $(KERNEL_PATH)/$(KERNEL_NAME)
 
 # build options
 BUILD_OPTION := \
-	--target targets/$(TARGET).json \
+	--target $(TARGET) \
 	-Z build-std=core,alloc
 
 ifeq ($(MODE), release) 

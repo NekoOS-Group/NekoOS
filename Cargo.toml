@@ -4,3 +4,5 @@ members = [
     "kernel",
     "ulib"
 ]
+
+resolver = "2"

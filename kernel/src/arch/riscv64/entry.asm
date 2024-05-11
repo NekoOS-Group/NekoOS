@@ -36,6 +36,14 @@ bootstack:
     .global bootstacktop
 bootstacktop:
 
+    .section .bss.heap
+    .align 12   # page align
+    .global bootheap
+bootheap:
+    .space 0x800000
+    .global bootheapend
+bootheapend:
+
     .section .data
     .align 12   # page align
 boot_page_table_sv39:

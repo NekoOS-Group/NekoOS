@@ -9,7 +9,5 @@ pub trait Scheduler<E>
     where E: ScheEntity
 {
     fn schedule(&mut self) -> Option<E>;
-    fn push(&mut self, entity: E) {
-
-    }
+    fn push(&mut self, entity: E);
 }

@@ -19,12 +19,10 @@ pub type PageAllocator  = page_allocator::PageAllocatorImpl;
 pub type Segment        = vm_segment::SegmentImpl;
 pub type VmSpace        = vm_space::VmSpaceImpl<PageTable>;
 
-use crate::config::KERNEL_HEAP_SIZE;
 use buddy_system_allocator::LockedHeapWithRescue as Heap;
 
 #[global_allocator]
 static mut KERNEL_HEAP: Heap<32> = Heap::new( kernel_heap::enhence );
-static mut KERNEL_HEAP_SPACE: [u8; KERNEL_HEAP_SIZE] = [0; KERNEL_HEAP_SIZE];
 
 static mut GLOBAL_ALLOCATOR: Option<PageAllocator> = None;
 static mut KERNEL_SPACE: Option<VmSpace> = None;

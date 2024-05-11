@@ -28,7 +28,7 @@ pub fn schedule(
     closure: impl FnOnce(core::time::Duration) + Send + Sync + 'static
 ) {
     unsafe {
-        if let Some(inner) = &mut TIMER {
+        if let Some(Some(inner)) = core::ptr::addr_of_mut!(TIMER).as_mut() {
             inner.add(time, closure);
         }
     }
@@ -36,7 +36,7 @@ pub fn schedule(
 
 pub fn alarm() {
     unsafe {
-        if let Some(inner) = &mut TIMER {
+        if let Some(Some(inner)) = core::ptr::addr_of_mut!(TIMER).as_mut() {
             inner.expire( get_time() );
         }
     }

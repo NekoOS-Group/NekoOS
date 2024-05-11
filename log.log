@@ -1,32 +1,0 @@
-Building riscv64 kernel
-Debug begin
-GNU gdb (Ubuntu 12.1-0ubuntu1~22.04) 12.1
-Copyright (C) 2022 Free Software Foundation, Inc.
-License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
-This is free software: you are free to change and redistribute it.
-There is NO WARRANTY, to the extent permitted by law.
-Type "show copying" and "show warranty" for details.
-This GDB was configured as "x86_64-linux-gnu".
-Type "show configuration" for configuration details.
-For bug reporting instructions, please see:
-<https://www.gnu.org/software/gdb/bugs/>.
-Find the GDB manual and other documentation resources online at:
-    <http://www.gnu.org/software/gdb/documentation/>.
-
-For help, type "help".
-Type "apropos word" to search for commands related to "word".
-The target architecture is set to "riscv:rv64".
-Reading symbols from target/riscv64gc-unknown-none-elf/debug/neko-kernel...
-Remote debugging using localhost:1234
-0x0000000000001000 in ?? ()
-Breakpoint 1 at 0xffffffffc0215628: start. (2 locations)
-Continuing.
-
-Breakpoint 1, neko_kernel::start (hartid=0, dtb=2264924160) at kernel/src/main.rs:37
-37	    dev::console::init();
-[?2004h(gdb) x[?2004l[?2004h(gdb) [?2004l[?2004h(gdb) [?2004l[?2004h(gdb) [?2004l[?2004h(gdb) quit
-[?2004l[?2004hA debugging session is active.
-
-	Inferior 1 [process 1] will be detached.
-
-Quit anyway? (y or n) [?2004l[Inferior 1 (process 1) detached]

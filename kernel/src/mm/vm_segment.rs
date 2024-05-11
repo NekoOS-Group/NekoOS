@@ -60,7 +60,7 @@ impl SegmentImpl {
             }
             MapType::Linear { offset } => {
                 info!( 
-                    "map {: <10} [{:#x}, {:#x}) -> [{:#x}, {:#x}) ({} pages) {:?}", 
+                    "map {: <10} [{:#x}, {:#x}) -> [{:#x}, {:#x}) ({: >5} pages) {:?}", 
                     name,
                     vpn_l * config::PAGE_SIZE as usize,
                     vpn_r * config::PAGE_SIZE as usize,

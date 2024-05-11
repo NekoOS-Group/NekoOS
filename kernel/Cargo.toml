@@ -4,8 +4,8 @@ version = "0.0.1"
 edition = "2021"
 authors = ["NekoOS Group"]
 license = "GPL3.0"
-rust-version = "1.69"
-description = "a rust OS for riscv64 only which is KAWAII"
+rust-version = "1.80"
+description = "qwq"
 
 [dependencies]
 bitflags = "*"

@@ -2,15 +2,18 @@
 #[panic_handler]
 fn panic(_info: &core::panic::PanicInfo) -> ! {
     if let Some(location) = _info.location() {
+        /*
         crate::println!(
             "Panicked at {}:{} {}",
             location.file(),
             location.line(),
-            _info.message().unwrap()
+            _info.message().expect("no message")
         );
+        */
     } else {
         crate::println!("Panicked: {}", _info.message().unwrap());
     }
+    crate::println!("Panicked: {}", _info.message().unwrap());
     crate::debug::backtrace();
     crate::dev::cpu::shutdown();
 }   
