@@ -1,6 +1,6 @@
 # used
 ARCH          ?= riscv64
-MODE          ?= release
+MODE          ?= debug
 LOG           ?= INFO
 GRAPHIC       ?= off
 SMP           ?= 1

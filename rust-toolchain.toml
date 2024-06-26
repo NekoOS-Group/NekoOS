@@ -1,0 +1,4 @@
+[toolchain]
+channel = "nightly"
+profile = "default"
+targets = ["riscv64gc-unknown-none-elf"]

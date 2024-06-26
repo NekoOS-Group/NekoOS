@@ -57,16 +57,9 @@ This is an example on Ubuntu to install the requirement.
 
  - rust environment
    ```
-   sudo apt install rustup
-   rustup install nightly
    rustup target add riscv64gc-unknown-none-elf
    cargo install cargo-binutils
    rustup component add rust-src llvm-tools-preview
-   ```
-
- - qemu  
-   ```
-   sudo apt install qemu
    ```
 
 ### Compile and Run

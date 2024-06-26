@@ -20,14 +20,13 @@ mod mm;
 mod task;
 mod trap;
 
-#[cfg(target_arch="riscv64")]
-#[path="arch/riscv64/mod.rs"]
-mod arch;
-
 #[cfg(target_arch="riscv32")]
 #[path="arch/riscv32/mod.rs"]
 mod arch;
 
+#[cfg(target_arch="riscv64")]
+#[path="arch/riscv64/mod.rs"]
+mod arch;
 
 #[allow(unused)]
 #[cfg(debug_assertions)]
