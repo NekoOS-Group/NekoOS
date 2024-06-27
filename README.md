@@ -53,18 +53,21 @@ Neko is kawaiiiiiiiii!
 
 ### Prerequisites
 
-This is an example on Ubuntu to install the requirement.
+Please install `rustup` and make `~/.cargo/bin` in your environment varible `PATH` at the first. Run the following commands then to setup the rust environment.
 
- - rust environment
    ```
+   rustup toolchain add nightly
    rustup target add riscv64gc-unknown-none-elf
    cargo install cargo-binutils
-   rustup component add rust-src llvm-tools-preview
+   rustup component add rust-src llvm-tools
    ```
+
+Next, install `qemu-system-{ARCH}` for running the kernel in simulator and `gdb` or `lldb` for debugging.
 
 ### Compile and Run
 
-you can run with.
+you can run with
+
 ```
 make run LOG=INFO
 ```
