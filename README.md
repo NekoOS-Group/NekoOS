@@ -53,7 +53,7 @@ Neko is kawaiiiiiiiii!
 
 ### Prerequisites
 
-Please install `rustup` and make `~/.cargo/bin` in your environment varible `PATH` at the first. Run the following commands then to setup the rust environment.
+Please install `rustup` and run the following commands then to setup the rust environment.
 
    ```
    rustup toolchain add nightly
@@ -62,7 +62,7 @@ Please install `rustup` and make `~/.cargo/bin` in your environment varible `PAT
    rustup component add rust-src llvm-tools
    ```
 
-Next, install `qemu-system-{ARCH}` for running the kernel in simulator and `gdb` or `lldb` for debugging.
+Next, install `qemu-system-{ARCH}` for running the kernel in simulator and `gdb` or `lldb` for further debugging.
 
 ### Compile and Run
 

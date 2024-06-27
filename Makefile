@@ -58,12 +58,16 @@ endif
 GDB := gdb-multiarch
 LLDB := lldb
 QEMU := qemu-system-$(ARCH)
-OBJCOPY := rust-objcopy --binary-architecture=$(ARCH)
+OBJCOPY := cargo objcopy ---binary-architecture=$(ARCH)
+
+__nm:
+	@cd kernel && cargo nm $(BUILD_OPTION) -- --print-size --size-sort
 
 __kernel:
 	@echo Building $(ARCH) kernel
-	@cd kernel && cargo build $(BUILD_OPTION)
-	@$(OBJCOPY) $(KERNEL_ELF) --strip-all -O binary $(KERNEL_BIN)
+	@cd kernel && cargo objcopy $(BUILD_OPTION) -- \
+        --binary-architecture=$(ARCH) \
+	    --strip-all -O binary ../$(KERNEL_BIN)
 
 build: __kernel
 
