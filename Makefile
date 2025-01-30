@@ -1,3 +1,5 @@
+.DEFAULT_GOAL := build
+
 # used
 ARCH          ?= riscv64
 MODE          ?= debug
@@ -11,6 +13,8 @@ EXTRA_NIC     ?= off
 ACCEL         ?= off
 HYPERVISOR    ?= off
 UART2         ?= off
+
+include env.mk
 
 export ARCH
 export LOG
@@ -69,7 +73,7 @@ __kernel:
         --binary-architecture=$(ARCH) \
 	    --strip-all -O binary ../$(KERNEL_BIN)
 
-build: __kernel
+build: check-env __kernel
 
 run: build
 	@$(QEMU) $(QEMU_OPTIONS) -kernel $(KERNEL_BIN)

@@ -72,6 +72,38 @@ you can run with
 make run LOG=INFO
 ```
 
+## Environment Setup
+
+### Prerequisites
+
+1. Install Rust toolchain:
+   ```bash
+   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+   ```
+
+2. Install required Rust components:
+   ```bash
+   rustup toolchain add nightly
+   rustup target add riscv64gc-unknown-none-elf
+   cargo install cargo-binutils
+   rustup component add rust-src llvm-tools
+   ```
+
+3. Install QEMU:
+   - Ubuntu/Debian:
+     ```bash
+     sudo apt install qemu-system
+     ```
+   - macOS:
+     ```bash
+     brew install qemu
+     ```
+
+4. Verify installation:
+   ```bash
+   make check-env
+   ```
+
 ## Todo List
   - kernel
     - [x] debug
