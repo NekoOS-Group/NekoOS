@@ -1,5 +1,6 @@
 use alloc::collections::BTreeMap;
 use alloc::sync::Arc;
+use riscv::interrupt::Mutex;
 
 use crate::algorithm::allocator;
 use crate::config;
@@ -26,8 +27,8 @@ pub use processor::Processor;
 pub type ProcessRef = Arc<spin::Mutex<Process>>;
 pub type ThreadRef  = Arc<spin::Mutex<Thread>>;
 
-pub static mut PID_ALLOCATOR: Option<allocator::BuddyAllocator> = None;
-pub static mut TID_ALLOCATOR: Option<allocator::BuddyAllocator> = None;
+pub static PID_ALLOCATOR: spin::Mutex<Option<allocator::BuddyAllocator>> = spin::Mutex::new(None);
+pub static TID_ALLOCATOR: spin::Mutex<Option<allocator::BuddyAllocator>> = spin::Mutex::new(None);
 
 pub static PROCESS_POOL: spin::RwLock<BTreeMap<usize, ProcessRef>> 
     = spin::RwLock::new(BTreeMap::new());

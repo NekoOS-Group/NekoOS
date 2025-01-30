@@ -7,25 +7,25 @@ use super::PID_ALLOCATOR;
 
 pub fn init() {
     unsafe {
-        PID_ALLOCATOR = Some( BuddyAllocator::new() );
-        PID_ALLOCATOR.as_mut().map( |inner| 
-            { inner.add(0, config::MAX_THREAD); }
-        );
+        PID_ALLOCATOR.lock().replace(BuddyAllocator::new());
+        PID_ALLOCATOR.lock().as_mut().map(|inner| {
+            inner.add(0, config::MAX_THREAD);
+        });
     }
 }
 
 pub fn alloc() -> Option<usize> {
     unsafe {
-        PID_ALLOCATOR.as_mut().map( |inner| 
-            { inner.alloc() }
-        ).unwrap()
+        PID_ALLOCATOR.lock().as_mut().map(|inner| {
+            inner.alloc()
+        }).unwrap()
     }
 }
 
 pub fn dealloc(pid: usize) {
     unsafe {
-        PID_ALLOCATOR.as_mut().map( |inner| 
-            { inner.dealloc(pid) }
-        );
+        PID_ALLOCATOR.lock().as_mut().map(|inner| {
+            inner.dealloc(pid)
+        });
     }
 }

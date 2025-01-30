@@ -1,7 +1,6 @@
 #![no_std]
 #![no_main]
 #![allow(unused)]
-#![feature(panic_info_message)]
 
 #[macro_use]
 extern crate log;

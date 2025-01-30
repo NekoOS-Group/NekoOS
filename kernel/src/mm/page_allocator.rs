@@ -8,23 +8,25 @@ use crate::mm::GLOBAL_ALLOCATOR;
 
 pub fn alloc() -> Option<Page> {
     unsafe{ 
-        GLOBAL_ALLOCATOR.as_mut().map(
-            |inner| { inner.alloc() }
-        ).unwrap().map(
-            |ppn| { 
+        if let Some(inner) = GLOBAL_ALLOCATOR.lock().as_mut() {
+            if let Some(ppn) = inner.alloc() {
                 let x = Page::new(ppn);
                 x.clear(); 
-                x 
+                Some(x) 
+            } else {
+                None
             }
-        )
+        } else {
+            None
+        }
     }
 }
 
 pub fn dealloc(ppn: usize) {
     unsafe{ 
-        GLOBAL_ALLOCATOR.as_mut().map(
-            |inner| { inner.dealloc(ppn); }
-        );
+        if let Some(inner) = GLOBAL_ALLOCATOR.lock().as_mut() {
+            inner.dealloc(ppn);
+        }
     }
 }
 
@@ -37,7 +39,7 @@ pub fn init(memory: &fdt::standard_nodes::Memory) {
         (ekernel as usize - MEMORY_START_ADDRESS - PHYSICAL_MEMORY_OFFSET) / PAGE_SIZE
     );
     unsafe {
-        GLOBAL_ALLOCATOR = Some(PageAllocatorImpl::new())
+        GLOBAL_ALLOCATOR.lock().replace(PageAllocatorImpl::new());
     }
     for region in memory.regions() {
         let mut l = region.starting_address as usize;
@@ -58,9 +60,9 @@ pub fn add(l: usize, r:usize) {
         r - l
     );
     unsafe{ 
-        GLOBAL_ALLOCATOR.as_mut().map(
-            |inner| { inner.add(l, r); }
-        );
+        if let Some(inner) = GLOBAL_ALLOCATOR.lock().as_mut() {
+            inner.add(l, r);
+        }
     }
 }
 

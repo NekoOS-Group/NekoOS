@@ -9,3 +9,8 @@ default-target = "riscv64gc-unknown-none-elf"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+
+[lib]
+test = false
+doctest = false
+bench = false

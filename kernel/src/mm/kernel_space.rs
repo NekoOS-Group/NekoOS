@@ -5,8 +5,8 @@ use mm::page_table::PageTable;
 pub fn init(memory: &fdt::standard_nodes::Memory) {
     use crate::config::{ skernel, ekernel, stext, etext, srodata, erodata, sdata, edata, sbss, ebss, PHYSICAL_MEMORY_OFFSET, PAGE_SIZE };
     unsafe {
-        KERNEL_SPACE = Some(mm::VmSpace::new());
-        if let Some(Some(inner)) = core::ptr::addr_of_mut!(KERNEL_SPACE).as_mut() {
+        KERNEL_SPACE.lock().replace(mm::VmSpace::new());
+        if let Some(inner) = KERNEL_SPACE.lock().as_mut() {
             inner.push(
                 mm::Segment::new(
                     ".text",
@@ -72,7 +72,7 @@ pub fn init(memory: &fdt::standard_nodes::Memory) {
 
 pub fn on() {
     unsafe {
-        if let Some(Some(inner)) = core::ptr::addr_of_mut!(KERNEL_SPACE).as_mut() {
+        if let Some(inner) = KERNEL_SPACE.lock().as_mut() {
             inner.get_page_table().activate();
         }
     }
@@ -84,7 +84,7 @@ pub fn test() {
     use mm::page_table::PageTableEntry;
     use crate::config::{ stext, etext, srodata, erodata, sdata, edata, PAGE_SIZE };
     unsafe {
-        if let Some(Some(kernel_space)) = core::ptr::addr_of_mut!(KERNEL_SPACE).as_mut() {
+        if let Some(kernel_space) = KERNEL_SPACE.lock().as_mut() {
             let mid_text = stext as usize / 2 + etext as usize / 2;
             let mid_rodata = srodata as usize / 2+ erodata as usize/ 2;
             let mid_data = sdata as usize / 2 + edata as usize / 2;

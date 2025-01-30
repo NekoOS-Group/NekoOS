@@ -18,14 +18,13 @@ pub type PageTableEntry = crate::arch::mm::PageTableEntryImpl;
 pub type PageAllocator  = page_allocator::PageAllocatorImpl;
 pub type Segment        = vm_segment::SegmentImpl;
 pub type VmSpace        = vm_space::VmSpaceImpl<PageTable>;
-
-use buddy_system_allocator::LockedHeapWithRescue as Heap;
+pub type KernelHeap     = buddy_system_allocator::LockedHeap<32>;
 
 #[global_allocator]
-static mut KERNEL_HEAP: Heap<32> = Heap::new( kernel_heap::enhence );
+static KERNEL_HEAP: KernelHeap = KernelHeap::new();
 
-static mut GLOBAL_ALLOCATOR: Option<PageAllocator> = None;
-static mut KERNEL_SPACE: Option<VmSpace> = None;
+static GLOBAL_ALLOCATOR: spin::Mutex<Option<PageAllocator>> = spin::Mutex::new(None);
+static KERNEL_SPACE: spin::Mutex<Option<VmSpace>> = spin::Mutex::new(None);
 
 pub fn init(memory: &fdt::standard_nodes::Memory) {
     kernel_heap::init();
