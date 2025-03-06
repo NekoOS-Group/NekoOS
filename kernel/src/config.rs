@@ -11,7 +11,7 @@ pub const KERNEL_STACK_SIZE  : usize = 0x4000;
 pub const TICKS_PER_SEC      : u64   = 100;
 
 // kernel symbol
-extern "C" {
+unsafe extern "C" {
     pub fn skernel();
     pub fn stext();
     pub fn etext();

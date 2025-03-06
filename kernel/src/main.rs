@@ -27,11 +27,16 @@ mod arch;
 #[path="arch/riscv64/mod.rs"]
 mod arch;
 
+// Default architecture module if no specific architecture is targeted
+#[cfg(not(any(target_arch="riscv32", target_arch="riscv64")))]
+#[path="arch/riscv64/mod.rs"]
+mod arch;
+
 #[allow(unused)]
 #[cfg(debug_assertions)]
 mod debug;
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 fn start(hartid: usize, dtb: usize) -> ! {
     dev::console::init();
 

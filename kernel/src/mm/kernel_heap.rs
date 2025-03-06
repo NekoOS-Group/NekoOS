@@ -28,9 +28,9 @@ pub fn enhence(_heap: &mut Heap<32>, _layout: &Layout) {
 pub fn test() {
     use alloc::boxed::Box;
     use alloc::vec::Vec;
-    extern "C" {
-        fn sbss();
-        fn ebss();
+    unsafe extern "C" {
+        unsafe fn sbss();
+        unsafe fn ebss();
     }
     let bss_range = sbss as usize..ebss as usize;
     let a = Box::new(5);

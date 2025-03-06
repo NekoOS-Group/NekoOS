@@ -1,5 +1,5 @@
-#![feature(linkage)]
 #![no_std]
+#![feature(linkage)]
 
 mod lang;
 pub mod syscall;

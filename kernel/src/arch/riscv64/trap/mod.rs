@@ -14,9 +14,9 @@ use crate::{println, dev};
 core::arch::global_asm!(include_str!("trap_entry.asm"));
 
 pub fn init() {
-    extern "C" {
-        fn __traps_user();
-        fn __traps_sys();
+    unsafe extern "C" {
+        unsafe fn __traps_user();
+        unsafe fn __traps_sys();
     }
     unsafe {
         register::stvec::write(__traps_sys as usize, TrapMode::Direct);
@@ -41,7 +41,7 @@ pub fn enable_trap()
 pub fn disable_trap() 
     { unsafe { register::sstatus::clear_sie(); } }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub fn trap_handler(context : &mut Context) -> &mut Context{
     let scause = register::scause::read();
     let stval   = register::stval::read();
@@ -68,7 +68,7 @@ pub fn trap_handler(context : &mut Context) -> &mut Context{
     context
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub fn sys_trap_handler() -> () {
     debug!( "Trap recived at {:?}", dev::timer::get_time() );
     let scause = register::scause::read();

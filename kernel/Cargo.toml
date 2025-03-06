@@ -1,14 +1,11 @@
-cargo-features = ["per-package-target"]
-
 [package]
 name = "neko-kernel"
 version = "0.0.1"
-edition = "2021"
+edition = "2024"
 authors = ["NekoOS Group"]
 license = "GPL3.0"
-rust-version = "1.80"
+rust-version = "1.85"
 description = "qwq"
-default-target = "riscv64gc-unknown-none-elf"
 
 [dependencies]
 bitflags = "*"
@@ -26,3 +23,6 @@ path = "src/main.rs"
 test = false
 doctest = false
 bench = false
+
+[build]
+target = "riscv64gc-unknown-none-elf"
