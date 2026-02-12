@@ -20,13 +20,16 @@ pub type Segment        = vm_segment::SegmentImpl;
 pub type VmSpace        = vm_space::VmSpaceImpl<PageTable>;
 pub type KernelHeap     = buddy_system_allocator::LockedHeap<32>;
 
+// Global heap allocator for kernel dynamic allocations.
 #[global_allocator]
 static KERNEL_HEAP: KernelHeap = KernelHeap::new();
 
+// Global physical page allocator and kernel address space.
 static GLOBAL_ALLOCATOR: spin::Mutex<Option<PageAllocator>> = spin::Mutex::new(None);
 static KERNEL_SPACE: spin::Mutex<Option<VmSpace>> = spin::Mutex::new(None);
 
 pub fn init(memory: &fdt::standard_nodes::Memory) {
+    // Order matters: heap -> page allocator -> kernel space.
     kernel_heap::init();
     kernel_heap::test();
     page_allocator::init(memory);

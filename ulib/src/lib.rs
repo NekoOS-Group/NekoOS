@@ -1,8 +1,12 @@
 #![no_std]
-#![feature(linkage)]
 
 mod lang;
 pub mod syscall;
+
+// User programs must provide `fn main() -> i32`.
+extern "Rust" {
+    fn main() -> i32;
+}
 
 fn bss_init() {
     extern "C" {
@@ -15,19 +19,9 @@ fn bss_init() {
 }
 
 #[no_mangle]
-#[linkage = "weak"]
-fn main() -> i32 {
-    panic!("Cannot find main!");
-}
-
-#[no_mangle]
 #[link_section = ".text.entry"]
 pub extern "C" fn _start() -> ! {
     bss_init();
-    syscall::exit(main());
-}
-
-#[cfg(test)]
-mod test {
-    
+    let code = unsafe { main() };
+    syscall::exit(code);
 }

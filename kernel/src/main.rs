@@ -36,6 +36,7 @@ mod arch;
 #[cfg(debug_assertions)]
 mod debug;
 
+// Entry point from arch/riscv64/entry.asm after paging is enabled.
 #[unsafe(no_mangle)]
 fn start(hartid: usize, dtb: usize) -> ! {
     dev::console::init();
@@ -50,17 +51,17 @@ fn start(hartid: usize, dtb: usize) -> ! {
 
     let fdt = dev::fdt::get_fdt(dtb);
 
+    // Boot sequence: memory -> timer -> traps -> tasks.
     mm::init(&fdt.memory());
 
     dev::timer::init();
     
     trap::init();
-    trap::enable_trap();
     trap::enable_timer_interrupt();
+    dev::timer::set_next_trigger();
+    trap::enable_trap();
 
     task::init();
-
-    dev::timer::set_next_trigger();
 
     dev::cpu::shutdown()
 }

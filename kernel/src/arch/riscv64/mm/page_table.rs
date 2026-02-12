@@ -6,9 +6,9 @@ use mm::page_table::PageTableEntry;
 impl mm::page_table::PageTable<PageTableEntryImpl> for PageTableImpl {
     fn activate(&self) {
         info!( "switch page table: root @ Page<{:#x}>", self.get_root().get_ppn() );
-        let satp = self.get_root().get_ppn() | 8usize << 60;
         unsafe {
-            riscv::register::satp::write(satp);
+            use riscv::register::satp::{self, Mode};
+            satp::set(Mode::Sv39, 0, self.get_root().get_ppn());
             riscv::asm::sfence_vma_all();
         }
     }

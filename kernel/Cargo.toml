@@ -4,17 +4,17 @@ version = "0.0.1"
 edition = "2024"
 authors = ["NekoOS Group"]
 license = "GPL3.0"
-rust-version = "1.85"
+rust-version = "1.91"
 description = "qwq"
 
 [dependencies]
 bitflags = "*"
 bitmaps = { version = "*", default-features = false}
-buddy_system_allocator = { version = "*" }
+buddy_system_allocator = "*"
 fdt = "*"
 log = "*"
 naive-timer = "*"
-riscv = { git = "https://github.com/rcore-os/riscv", features = ["inline-asm"] }
+riscv = "*"
 spin = "*"
 
 [[bin]]
@@ -23,6 +23,3 @@ path = "src/main.rs"
 test = false
 doctest = false
 bench = false
-
-[build]
-target = "riscv64gc-unknown-none-elf"

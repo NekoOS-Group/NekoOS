@@ -1,6 +1,9 @@
 check_tool = $(shell which $(1) 2>/dev/null)
 check_cargo_cmd = $(shell cargo --list | grep "$(1)" 2>/dev/null)
 
+# Output mode: full (default) or quiet (warnings/errors only)
+ENV_CHECK_MODE ?= full
+
 # Define tool lists
 REQUIRED_TOOLS := cargo rustc
 OPTIONAL_TOOLS := qemu-system-$(ARCH) gdb lldb
@@ -17,11 +20,13 @@ Required tools are missing. Please install:
 endef
 
 .PHONY: check-env
-check-env:
-	@echo "➤ Checking environment..."
-	@echo "╔═══════════════════════════════════════╗"
-	@echo "║ Required Tools                        ║"
-	@echo "╚═══════════════════════════════════════╝"
+check-env: ## Check toolchain and optional tools
+	@if [ "$(ENV_CHECK_MODE)" != "quiet" ]; then \
+		echo "➤ Checking environment..."; \
+		echo "╔═══════════════════════════════════════╗"; \
+		echo "║ Required Tools                        ║"; \
+		echo "╚═══════════════════════════════════════╝"; \
+	fi
 	@EXIT_CODE=0; \
 	for tool in $(REQUIRED_TOOLS); do \
 		if [ -z "$$(which $$tool 2>/dev/null)" ]; then \
@@ -30,36 +35,50 @@ check-env:
 				echo "   Install with: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh"; \
 			EXIT_CODE=1; \
 		else \
-			echo "✅ $$tool: $$(which $$tool)"; \
+			if [ "$(ENV_CHECK_MODE)" != "quiet" ]; then \
+				echo "✅ $$tool: $$(which $$tool)"; \
+			fi; \
 		fi; \
 	done; \
-	echo ""; \
-	echo "╔═══════════════════════════════════════╗"; \
-	echo "║ Optional Tools                        ║"; \
-	echo "╚═══════════════════════════════════════╝"; \
+	if [ "$(ENV_CHECK_MODE)" != "quiet" ]; then \
+		echo ""; \
+		echo "╔═══════════════════════════════════════╗"; \
+		echo "║ Optional Tools                        ║"; \
+		echo "╚═══════════════════════════════════════╝"; \
+	fi; \
 	for tool in $(OPTIONAL_TOOLS); do \
 		if [ -z "$$(which $$tool 2>/dev/null)" ]; then \
 			echo "⚠️  $$tool: Not found (optional)"; \
 		else \
-			echo "✅ $$tool: $$(which $$tool)"; \
+			if [ "$(ENV_CHECK_MODE)" != "quiet" ]; then \
+				echo "✅ $$tool: $$(which $$tool)"; \
+			fi; \
 		fi; \
 	done; \
-	echo ""; \
-	echo "╔═══════════════════════════════════════╗"; \
-	echo "║ Required Cargo Commands               ║"; \
-	echo "╚═══════════════════════════════════════╝"; \
+	if [ "$(ENV_CHECK_MODE)" != "quiet" ]; then \
+		echo ""; \
+		echo "╔═══════════════════════════════════════╗"; \
+		echo "║ Required Cargo Commands               ║"; \
+		echo "╚═══════════════════════════════════════╝"; \
+	fi; \
 	for cmd in $(REQUIRED_CARGO_CMDS); do \
 		if [ -z "$$(cargo --list | grep "$$cmd" 2>/dev/null)" ]; then \
 			echo "❌ cargo-$$cmd: Not found"; \
 			echo "   Install with: cargo install cargo-binutils"; \
 			EXIT_CODE=1; \
 		else \
-			echo "✅ cargo-$$cmd: Found"; \
+			if [ "$(ENV_CHECK_MODE)" != "quiet" ]; then \
+				echo "✅ cargo-$$cmd: Found"; \
+			fi; \
 		fi; \
 	done; \
-	echo ""; \
+	if [ "$(ENV_CHECK_MODE)" != "quiet" ]; then \
+		echo ""; \
+	fi; \
 	if [ $$EXIT_CODE -eq 0 ]; then \
-		echo "✅ All required tools are available."; \
+		if [ "$(ENV_CHECK_MODE)" != "quiet" ]; then \
+			echo "✅ All required tools are available."; \
+		fi; \
 	else \
 		echo "❌ Some required tools are missing."; \
 		exit $$EXIT_CODE; \

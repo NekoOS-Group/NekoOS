@@ -1,7 +1,5 @@
 use alloc::collections::BTreeMap;
 use alloc::sync::Arc;
-use riscv::interrupt::Mutex;
-
 use crate::algorithm::allocator;
 use crate::config;
 use crate::dev;

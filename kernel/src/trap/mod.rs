@@ -11,13 +11,11 @@ pub fn init() {
 
 pub fn enable_timer_interrupt() {
     crate::arch::trap::enable_stimer_interrupt();
-    crate::arch::trap::enable_utimer_interrupt();
     info!("timer interrupt enabled.");
 }
 
 pub fn disable_timer_interrupt() {
     crate::arch::trap::disable_stimer_interrupt();
-    crate::arch::trap::disable_utimer_interrupt();
     info!("[Neko] timer interrupt disabled.");
 }
 

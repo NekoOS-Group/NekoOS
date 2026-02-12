@@ -3,9 +3,10 @@ use alloc::vec::Vec;
 use super::Allocator;
 
 pub struct StackAllocator {
+    // [l, r) is the contiguous free range; stack stores recycled pages.
     l: usize,
     r: usize,
-    stack :Vec<usize>
+    stack: Vec<usize>
 }
 
 impl Allocator for StackAllocator {
